@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>College Complaint Portal</title>
+
+  <!-- Link CSS -->
+  <link rel="stylesheet" href="style.css" />
+</head>
+
+<body>
+
+  <!-- NAVBAR -->
+  <div class="navbar">
+    <h2>College Complaint Portal</h2>
+    <div class="nav-links">
+      <a href="#form">Register Complaint</a>
+      <a href="#footer">Contact</a>
+    </div>
+  </div>
+
+  <!-- HERO SECTION -->
+  <div class="hero">
+    <h1>Welcome to the Complaint Portal</h1>
+    <p>Your concerns matter. Submit complaints easily and get faster resolutions.</p>
+    <a href="#form"><button class="btn-primary">Submit Complaint</button></a>
+  </div>
+
+  <!-- FORM SECTION -->
+  <div id="form" class="form-section">
+    <div class="card">
+      <h2>Complaint Form</h2>
+
+      <label>Full Name</label>
+      <input type="text" placeholder="Enter your name">
+
+      <label>Roll Number</label>
+      <input type="text" placeholder="Enter your roll number">
+
+      <label>Department</label>
+      <select>
+        <option>CSE</option>
+        <option>ECE</option>
+        <option>EEE</option>
+        <option>CIVIL</option>
+        <option>MECH</option>
+      </select>
+
+      <label>Complaint Category</label>
+      <select>
+        <option>Hostel</option>
+        <option>Classroom</option>
+        <option>Faculty</option>
+        <option>WiFi / Internet</option>
+        <option>Other Issues</option>
+      </select>
+
+      <label>Complaint Description</label>
+      <textarea placeholder="Explain your issue in detail"></textarea>
+
+      <button class="btn-submit">Submit</button>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <div id="footer" class="footer">
+    © 2024 College Complaint Portal | All Rights Reserved
+  </div>
+
+</body>
+</html>
