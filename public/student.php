@@ -5,27 +5,45 @@ require '../config/db.php';
 if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'student') { header("Location: index.php"); exit(); }
 
 $message = "";
-$customLogo = 'uploads/site_logo.png';
-$defaultLogo = 'assets/images/logo.png';
-$displayLogo = file_exists($customLogo) ? $customLogo . '?v=' . filemtime($customLogo) : $defaultLogo;
 
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
+// Site Branding
+$customLogo = 'uploads/site_logo.png';
+$displayLogo = file_exists($customLogo) ? $customLogo . '?v=' . filemtime($customLogo) : 'assets/images/logo.png';
+$customNameFile = 'uploads/site_name.txt';
+$displaySiteName = file_exists($customNameFile) ? htmlspecialchars(file_get_contents($customNameFile)) : 'Government College of Engineering, Keonjhar';
+
+// Profile Picture Logic
+$regNo = $_SESSION['reg_no'];
+$profilePicPath = "uploads/" . $regNo . "_profile.jpg";
+// Generates a beautiful avatar with initials if they haven't uploaded one
+$displayProfilePic = file_exists($profilePicPath) ? $profilePicPath . '?v=' . time() : 'https://ui-avatars.com/api/?name=' . urlencode($_SESSION['full_name']) . '&background=0f766e&color=fff&rounded=true&bold=true';
+
+// Upload Profile Picture
+if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['upload_avatar'])) {
+    if (isset($_FILES['avatarFile']) && $_FILES['avatarFile']['error'] == 0) {
+        $allowed = ['image/jpeg', 'image/png', 'image/jpg'];
+        if (in_array($_FILES['avatarFile']['type'], $allowed)) {
+            move_uploaded_file($_FILES['avatarFile']['tmp_name'], $profilePicPath);
+            $message = "<script>document.addEventListener('DOMContentLoaded', function() { Swal.fire({icon: 'success', title: 'Profile Updated!'}).then(() => { window.location.href = 'student.php'; }); });</script>";
+        }
+    }
+}
+
+// Submit Complaint
+if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['submit_complaint'])) {
     $name = $_SESSION['full_name'];
-    $regNo = $_SESSION['reg_no'];
     $branch = $conn->real_escape_string($_POST['sBranch']);
     $year = $conn->real_escape_string($_POST['sYear']);
     $category = $conn->real_escape_string($_POST['sCategory']);
     $priority = $conn->real_escape_string($_POST['sPriority']); 
     $desc = $conn->real_escape_string($_POST['sDesc']); 
-    
     $fileName = "None";
 
     if (isset($_FILES['sFile']) && $_FILES['sFile']['error'] == 0) {
         $target_dir = "uploads/";
         if (!is_dir($target_dir)) mkdir($target_dir, 0777, true);
-        $fileSize = $_FILES['sFile']['size'];
-        if ($fileSize > 2 * 1024 * 1024) {
-            $message = "<script>document.addEventListener('DOMContentLoaded', function() { Swal.fire({icon: 'error', title: 'File Too Large', text: 'Max 2MB.', confirmButtonColor: '#0f766e'}); });</script>";
+        if ($_FILES['sFile']['size'] > 2 * 1024 * 1024) {
+            $message = "<script>document.addEventListener('DOMContentLoaded', function() { Swal.fire({icon: 'error', title: 'File Too Large'}); });</script>";
         } else {
             $fileName = time() . "_" . basename($_FILES["sFile"]["name"]);
             move_uploaded_file($_FILES["sFile"]["tmp_name"], $target_dir . $fileName);
@@ -35,9 +53,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if ($message === "") {
         $sql = "INSERT INTO complaints (reg_no, name, branch, study_year, category, priority, description, file_name) VALUES ('$regNo', '$name', '$branch', '$year', '$category', '$priority', '$desc', '$fileName')";
         if ($conn->query($sql) === TRUE) {
-            $message = "<script>document.addEventListener('DOMContentLoaded', function() { Swal.fire({ icon: 'success', title: 'Complaint Submitted!', text: 'Your issue has been securely sent.', confirmButtonColor: '#0f766e' }).then(() => { window.location.href = 'student.php'; }); });</script>";
+            $message = "<script>document.addEventListener('DOMContentLoaded', function() { Swal.fire({ icon: 'success', title: 'Complaint Submitted!' }).then(() => { window.location.href = 'student.php'; }); });</script>";
         } else {
-            $message = "<script>document.addEventListener('DOMContentLoaded', function() { Swal.fire({icon: 'error', title: 'Oops...', text: 'Something went wrong.', confirmButtonColor: '#0f766e'}); });</script>";
+            $message = "<script>document.addEventListener('DOMContentLoaded', function() { Swal.fire({icon: 'error', title: 'Oops...', text: 'Something went wrong.'}); });</script>";
         }
     }
 }
@@ -55,17 +73,29 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 <body>
     <?php echo $message; ?>
     <nav class="top-nav">
-        <div class="logo nav-logo-box"><img src="<?php echo $displayLogo; ?>" alt="Logo" class="nav-mini-logo"><span>GCE Keonjhar <span class="hide-mobile">| Student Panel</span></span></div>
+        <div class="logo nav-logo-box"><img src="<?php echo $displayLogo; ?>" alt="Logo" class="nav-mini-logo"><span class="hide-mobile"><?php echo $displaySiteName; ?></span></div>
         <div style="display: flex; align-items: center; gap: 15px;">
             <button id="themeBtn" onclick="toggleTheme()" class="theme-toggle">🌙</button>
-            <a href="logout.php" class="btn-outline btn-small" style="text-decoration: none;">Logout</a>
+            <a href="logout.php" class="btn-outline btn-small">Logout</a>
+            <img src="<?php echo $displayProfilePic; ?>" class="nav-avatar" title="<?php echo $_SESSION['full_name']; ?>" onclick="document.getElementById('avatarUploadBox').style.display='block';">
         </div>
     </nav>
 
     <div class="dashboard-container slide-up">
+        
+        <div id="avatarUploadBox" class="glass-card mb-40" style="display:none; border: 2px solid var(--primary);">
+            <h3 style="display:flex; justify-content:space-between;">📸 Update Profile Picture <span style="cursor:pointer;" onclick="document.getElementById('avatarUploadBox').style.display='none';">❌</span></h3>
+            <form method="POST" action="" enctype="multipart/form-data" style="display:flex; gap:15px; align-items:center;">
+                <input type="hidden" name="upload_avatar" value="1">
+                <input type="file" name="avatarFile" accept="image/png, image/jpeg" required>
+                <button type="submit" class="btn-primary">Upload</button>
+            </form>
+        </div>
+
         <div class="glass-card form-section">
             <h3>📝 Welcome, <?php echo $_SESSION['full_name']; ?>! File a New Complaint</h3>
             <form method="POST" action="" enctype="multipart/form-data">
+                <input type="hidden" name="submit_complaint" value="1">
                 <div class="input-grid">
                     <div><label>Full Name</label><input type="text" value="<?php echo $_SESSION['full_name']; ?>" readonly style="background: var(--input-bg); opacity: 0.7;"></div>
                     <div><label>Reg Number</label><input type="text" value="<?php echo $_SESSION['reg_no']; ?>" readonly style="background: var(--input-bg); opacity: 0.7;"></div>
@@ -76,7 +106,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 </div>
                 <label>Complaint Details</label><textarea name="sDesc" required></textarea>
                 <label>Attach Proof (Max 2MB)</label><input type="file" name="sFile" accept="image/*,.pdf">
-                <button type="submit" class="btn-primary mt-20 w-100">Submit</button>
+                <button type="submit" class="btn-primary mt-20 w-100">Submit Details</button>
             </form>
         </div>
 
@@ -84,8 +114,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             <h3>🔍 My Recent Complaints</h3>
             <div class="complaints-grid">
                 <?php
-                $myRegNo = $_SESSION['reg_no'];
-                $result = $conn->query("SELECT * FROM complaints WHERE reg_no='$myRegNo' ORDER BY created_at DESC");
+                $result = $conn->query("SELECT * FROM complaints WHERE reg_no='$regNo' ORDER BY created_at DESC");
                 if ($result->num_rows > 0) {
                     while($row = $result->fetch_assoc()) {
                         $sClass = ($row['status'] == 'Pending') ? 'badge-pending' : 'badge-resolved';
