@@ -1,4 +1,3 @@
-/* File: public/signup.php */
 <?php
 require '../config/db.php';
 $message = "";
