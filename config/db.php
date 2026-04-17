@@ -1,4 +1,3 @@
-// File: config/db.php
 <?php
 // Securely grab credentials from Render's Environment Variables
 $servername = getenv("DB_HOST");
