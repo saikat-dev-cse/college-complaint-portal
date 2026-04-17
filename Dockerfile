@@ -16,4 +16,4 @@ RUN a2enmod rewrite
 COPY . /var/www/html/
 
 # Give the server permission to save student files in the uploads folder
-RUN chmod -R 777 /var/www/html/public/uploads
+RUN mkdir -p /var/www/html/public/uploads && chmod -R 777 /var/www/html/public/uploads
