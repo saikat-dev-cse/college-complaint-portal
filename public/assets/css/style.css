@@ -1,0 +1,49 @@
+body {
+    font-family: Arial;
+    background: #f1f5f9;
+    margin: 0;
+}
+
+.center-box {
+    width: 300px;
+    margin: 100px auto;
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+}
+
+input, textarea {
+    width: 100%;
+    padding: 10px;
+    margin: 10px 0;
+}
+
+.btn-primary {
+    background: teal;
+    color: white;
+    padding: 10px;
+    border: none;
+    width: 100%;
+}
+
+.admin-layout {
+    display: flex;
+}
+
+.sidebar {
+    width: 200px;
+    background: black;
+    color: white;
+    padding: 20px;
+}
+
+.main {
+    padding: 20px;
+    flex: 1;
+}
+
+.card {
+    background: white;
+    padding: 15px;
+    margin: 10px 0;
+}
