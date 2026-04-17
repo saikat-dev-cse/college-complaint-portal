@@ -3,6 +3,9 @@ session_start();
 require '../config/db.php';
 
 $message = "";
+$customLogo = 'uploads/site_logo.png';
+$defaultLogo = 'assets/images/logo.png';
+$displayLogo = file_exists($customLogo) ? $customLogo . '?v=' . filemtime($customLogo) : $defaultLogo;
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $role = $conn->real_escape_string($_POST['loginRole']);
@@ -19,6 +22,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $_SESSION['full_name'] = $user['full_name'];
             $_SESSION['reg_no'] = $user['reg_no'];
             $_SESSION['role'] = $user['role'];
+            $_SESSION['email'] = $user['email']; // Crucial for Super Admin check
             header("Location: " . ($role === 'student' ? "student.php" : "admin.php"));
             exit();
         } else {
@@ -43,7 +47,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <?php echo $message; ?>
 
     <nav class="top-nav">
-        <div class="logo">Complaint Portal</div>
+        <div class="logo nav-logo-box"><img src="<?php echo $displayLogo; ?>" alt="Logo" class="nav-mini-logo"><span>Complaint Portal</span></div>
         <div style="display: flex; align-items: center; gap: 10px;">
             <button id="themeBtn" onclick="toggleTheme()" class="theme-toggle">🌙</button>
             <a href="index.php" class="btn-primary btn-small">Login</a>
@@ -53,7 +57,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     <div class="center-layout">
         <div class="glass-card login-box fade-in">
-            <img src="assets/images/logo.png" alt="Logo" class="college-logo">
+            <img src="<?php echo $displayLogo; ?>" alt="Logo" class="college-logo">
             <h2 class="title" style="font-size: 20px;">Government College of Engineering, Keonjhar</h2>
             <p class="subtitle">Complaint Management Portal</p>
 
