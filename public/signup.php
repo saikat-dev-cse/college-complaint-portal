@@ -2,6 +2,10 @@
 require '../config/db.php';
 $message = "";
 
+$customLogo = 'uploads/site_logo.png';
+$defaultLogo = 'assets/images/logo.png';
+$displayLogo = file_exists($customLogo) ? $customLogo . '?v=' . filemtime($customLogo) : $defaultLogo;
+
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $name = $conn->real_escape_string($_POST['regName']);
     $regNo = $conn->real_escape_string($_POST['regNo']);
@@ -37,7 +41,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <?php echo $message; ?>
 
     <nav class="top-nav">
-        <div class="logo">Complaint Portal</div>
+        <div class="logo nav-logo-box"><img src="<?php echo $displayLogo; ?>" alt="Logo" class="nav-mini-logo"><span>Complaint Portal</span></div>
         <div style="display: flex; align-items: center; gap: 10px;">
             <button id="themeBtn" onclick="toggleTheme()" class="theme-toggle">🌙</button>
             <a href="index.php" class="btn-outline btn-small">Login</a>
@@ -47,7 +51,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     <div class="center-layout">
         <div class="glass-card login-box fade-in">
-            <img src="assets/images/logo.png" alt="Logo" class="college-logo">
+            <img src="<?php echo $displayLogo; ?>" alt="Logo" class="college-logo">
             <h2 class="title" style="font-size: 20px;">Government College of Engineering, Keonjhar</h2>
             <p class="subtitle">Create Your Account</p>
 
