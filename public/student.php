@@ -5,6 +5,9 @@ require '../config/db.php';
 if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'student') { header("Location: index.php"); exit(); }
 
 $message = "";
+$customLogo = 'uploads/site_logo.png';
+$defaultLogo = 'assets/images/logo.png';
+$displayLogo = file_exists($customLogo) ? $customLogo . '?v=' . filemtime($customLogo) : $defaultLogo;
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $name = $_SESSION['full_name'];
@@ -52,7 +55,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 <body>
     <?php echo $message; ?>
     <nav class="top-nav">
-        <div class="logo nav-logo-box"><img src="assets/images/logo.png" alt="Logo" class="nav-mini-logo"><span>GCE Keonjhar <span class="hide-mobile">| Student Panel</span></span></div>
+        <div class="logo nav-logo-box"><img src="<?php echo $displayLogo; ?>" alt="Logo" class="nav-mini-logo"><span>GCE Keonjhar <span class="hide-mobile">| Student Panel</span></span></div>
         <div style="display: flex; align-items: center; gap: 15px;">
             <button id="themeBtn" onclick="toggleTheme()" class="theme-toggle">🌙</button>
             <a href="logout.php" class="btn-outline btn-small" style="text-decoration: none;">Logout</a>
