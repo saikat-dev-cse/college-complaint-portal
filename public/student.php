@@ -1,3 +1,4 @@
+/* File: public/student.php */
 <?php
 session_start();
 require '../config/db.php';
@@ -15,7 +16,7 @@ $displaySiteName = file_exists($customNameFile) ? htmlspecialchars(file_get_cont
 // Profile Picture Logic
 $regNo = $_SESSION['reg_no'];
 $profilePicPath = "uploads/" . $regNo . "_profile.jpg";
-// Generates a beautiful avatar with initials if they haven't uploaded one
+// FIX: Generates a beautiful avatar with initials if they haven't uploaded one
 $displayProfilePic = file_exists($profilePicPath) ? $profilePicPath . '?v=' . time() : 'https://ui-avatars.com/api/?name=' . urlencode($_SESSION['full_name']) . '&background=0f766e&color=fff&rounded=true&bold=true';
 
 // Upload Profile Picture
@@ -77,23 +78,23 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['submit_complaint'])) {
         <div style="display: flex; align-items: center; gap: 15px;">
             <button id="themeBtn" onclick="toggleTheme()" class="theme-toggle">🌙</button>
             <a href="logout.php" class="btn-outline btn-small">Logout</a>
-            <img src="<?php echo $displayProfilePic; ?>" class="nav-avatar" title="<?php echo $_SESSION['full_name']; ?>" onclick="document.getElementById('avatarUploadBox').style.display='block';">
+            <img src="<?php echo $displayProfilePic; ?>" class="student-avatar" title="<?php echo $_SESSION['full_name']; ?>" onclick="document.getElementById('avatarUploadBox').style.display='block';">
         </div>
     </nav>
 
     <div class="dashboard-container slide-up">
         
-        <div id="avatarUploadBox" class="glass-card mb-40" style="display:none; border: 2px solid var(--primary);">
-            <h3 style="display:flex; justify-content:space-between;">📸 Update Profile Picture <span style="cursor:pointer;" onclick="document.getElementById('avatarUploadBox').style.display='none';">❌</span></h3>
+        <div id="avatarUploadBox" class="glass-card mb-40 fade-in" style="display:none; border: 2px solid var(--primary);">
+            <h3 style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 20px;">📸 Update Profile Picture <span style="cursor:pointer;" onclick="document.getElementById('avatarUploadBox').style.display='none';">❌</span></h3>
             <form method="POST" action="" enctype="multipart/form-data" style="display:flex; gap:15px; align-items:center;">
                 <input type="hidden" name="upload_avatar" value="1">
-                <input type="file" name="avatarFile" accept="image/png, image/jpeg" required>
+                <input type="file" name="avatarFile" accept="image/png, image/jpeg, image/jpg" required>
                 <button type="submit" class="btn-primary">Upload</button>
             </form>
         </div>
 
         <div class="glass-card form-section">
-            <h3>📝 Welcome, <?php echo $_SESSION['full_name']; ?>! File a New Complaint</h3>
+            <h3>📝 Welcome, <?php echo $_SESSION['full_name']; ?>! File a New Grievance</h3>
             <form method="POST" action="" enctype="multipart/form-data">
                 <input type="hidden" name="submit_complaint" value="1">
                 <div class="input-grid">
@@ -104,14 +105,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['submit_complaint'])) {
                     <div><label>Category</label><select name="sCategory" required><option>Hostel & Mess</option><option>Academic</option><option>Infrastructure</option><option>Anti-Ragging</option><option>Other</option></select></div>
                     <div><label>Priority</label><select name="sPriority" required style="font-weight: bold; color: var(--primary);"><option value="High">🔴 High</option><option value="Medium" selected>🟡 Medium</option><option value="Low">🟢 Low</option></select></div>
                 </div>
-                <label>Complaint Details</label><textarea name="sDesc" required></textarea>
-                <label>Attach Proof (Max 2MB)</label><input type="file" name="sFile" accept="image/*,.pdf">
-                <button type="submit" class="btn-primary mt-20 w-100">Submit Details</button>
+                <label>Complaint Details</label><textarea name="sDesc" placeholder="Describe your issue clearly..." required></textarea>
+                <label>Attach Proof (Optional, Max 2MB)</label><input type="file" name="sFile" accept="image/*,.pdf">
+                <button type="submit" class="btn-primary mt-20 w-100">Submit Grievance</button>
             </form>
         </div>
 
         <div class="glass-card mt-20 mb-40">
-            <h3>🔍 My Recent Complaints</h3>
+            <h3>🔍 My Grievance History</h3>
             <div class="complaints-grid">
                 <?php
                 $result = $conn->query("SELECT * FROM complaints WHERE reg_no='$regNo' ORDER BY created_at DESC");
