@@ -21,6 +21,9 @@ h2, h3 { color: var(--text-main); margin-bottom: 15px; }
 @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
 
+/* UI FIX: Remove underlines globally from links */
+a { text-decoration: none; }
+
 .theme-toggle { background: transparent; border: none; font-size: 20px; cursor: pointer; transition: transform 0.2s; }
 .theme-toggle:hover { transform: scale(1.1); }
 label { display: block; font-weight: 600; font-size: 14px; margin: 12px 0 6px 0; color: var(--text-light); }
@@ -35,23 +38,29 @@ button { cursor: pointer; border: none; font-weight: 600; transition: 0.3s; bord
 .btn-outline:hover { background: var(--primary); color: white; }
 .btn-small { padding: 6px 12px; font-size: 13px; }
 
-.glass-card { background: var(--glass-bg); padding: 30px; border-radius: 12px; box-shadow: var(--shadow); }
+/* UI FIX: Soft, circular corners for boxes */
+.glass-card { background: var(--glass-bg); padding: 30px; border-radius: 24px; box-shadow: var(--shadow); }
+.login-box { width: 100%; max-width: 450px; text-align: center; border-radius: 32px; } /* Extra round for login */
+
 body:not(.dark-mode) .bg-gradient { background: linear-gradient(135deg, #ccfbf1 0%, #e2e8f0 100%); min-height: 100vh; }
 body.dark-mode .bg-gradient { background: var(--bg-color); min-height: 100vh; }
 
 .center-layout { display: flex; justify-content: center; align-items: center; min-height: calc(100vh - 80px); padding: 20px; }
-.login-box { width: 100%; max-width: 450px; text-align: center; }
 .college-logo { width: 90px; height: 90px; object-fit: contain; background-color: white; padding: 5px; border-radius: 50%; margin: 0 auto 15px auto; display: block; box-shadow: 0 5px 15px rgba(0,0,0,0.15); }
 
 .top-nav { position: sticky; top: 0; z-index: 1000; display: flex; justify-content: space-between; align-items: center; padding: 15px 5%; background: var(--nav-bg); backdrop-filter: blur(12px); box-shadow: 0 4px 15px rgba(0,0,0,0.08); }
 .top-nav .logo { font-size: 20px; font-weight: bold; color: var(--primary); }
-.nav-logo-box { display: flex; align-items: center; font-size: 16px; }
+.nav-logo-box { display: flex; align-items: center; font-size: 16px; font-weight: 700;}
 .nav-mini-logo { width: 35px; height: 35px; object-fit: contain; background: white; border-radius: 50%; padding: 2px; margin-right: 10px; }
 
-.dashboard-container { max-width: 900px; margin: 30px auto; padding: 0 20px; }
+/* STUDENT AVATAR */
+.nav-avatar { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; border: 2px solid var(--primary); background: var(--input-bg); }
+
+/* UI FIX: Widened the container to reduce margins */
+.dashboard-container { max-width: 1200px; width: 95%; margin: 30px auto; padding: 0; }
 .input-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
 
-.c-card { border-left: 5px solid #eab308; background: var(--glass-bg); padding: 15px; border-radius: 8px; border: 1px solid var(--border-color); }
+.c-card { border-left: 5px solid #eab308; background: var(--glass-bg); padding: 15px; border-radius: 12px; border: 1px solid var(--border-color); }
 .c-card.resolved { border-left-color: #22c55e; }
 .c-badge { display: inline-block; padding: 4px 8px; border-radius: 20px; font-size: 12px; font-weight: bold; }
 .badge-pending { background: #fef08a; color: #854d0e; }
@@ -61,28 +70,28 @@ body.dark-mode .bg-gradient { background: var(--bg-color); min-height: 100vh; }
 
 .admin-layout { display: flex; align-items: flex-start; min-height: 100vh; }
 .sidebar { position: sticky; top: 0; height: 100vh; width: 260px; background: #0f172a; color: white; padding: 20px; display: flex; flex-direction: column; z-index: 1000; }
-.sidebar .logo { font-size: 18px; font-weight: bold; padding-bottom: 20px; border-bottom: 1px solid #334155; margin-bottom: 20px; line-height: 1.4; text-align: center; }
-
-/* THE BUG FIX IS RIGHT HERE - Strict sizing for the Admin Sidebar Logo */
+.sidebar .logo { font-size: 16px; font-weight: bold; padding-bottom: 20px; border-bottom: 1px solid #334155; margin-bottom: 20px; line-height: 1.4; text-align: center; }
 .sidebar .logo img { width: 70px; height: 70px; object-fit: contain; background: white; border-radius: 50%; padding: 5px; margin: 0 auto 15px auto; display: block; box-shadow: 0 4px 10px rgba(0,0,0,0.3); }
 
 .nav-links { list-style: none; display: flex; flex-direction: column; gap: 10px; }
-.nav-links li { padding: 12px 15px; border-radius: 8px; cursor: pointer; transition: 0.3s; }
+.nav-links li { padding: 12px 15px; border-radius: 8px; cursor: pointer; transition: 0.3s; font-weight: 600;}
 .nav-links li:hover, .nav-links li.active { background: var(--primary); }
 .nav-links li.logout { background: #ef4444; margin-top: auto; }
 
-.main-content { flex: 1; padding: 30px; min-width: 0; }
+.main-content { flex: 1; padding: 30px 40px; min-width: 0; }
 .admin-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
 .dashboard-stats { display: flex; gap: 20px; margin-bottom: 20px; }
-.stat-card { flex: 1; background: var(--glass-bg); padding: 20px; border-radius: 12px; font-size: 18px; font-weight: bold; box-shadow: var(--shadow); }
+.stat-card { flex: 1; background: var(--glass-bg); padding: 20px; border-radius: 16px; font-size: 18px; font-weight: bold; box-shadow: var(--shadow); }
 .controls-bar { display: flex; gap: 15px; } .controls-bar input, .controls-bar select { flex: 1; margin: 0; }
-.table-responsive { overflow-x: auto; width: 100%; }
-.modern-table { width: 100%; border-collapse: collapse; min-width: 600px; }
+.table-responsive { overflow-x: auto; width: 100%; border-radius: 12px; }
+.modern-table { width: 100%; border-collapse: collapse; min-width: 800px; }
 .modern-table th, .modern-table td { padding: 15px; text-align: left; border-bottom: 1px solid var(--border-color); }
 .modern-table th { background: var(--input-bg); color: var(--text-light); }
+
+@media print { .sidebar, .controls-bar, .admin-header, .analytics-panel { display: none !important; } body { background: white; color: black; } .glass-card { box-shadow: none; border: none; } }
 
 @media (max-width: 768px) {
     .hide-mobile { display: none; } .input-grid { grid-template-columns: 1fr; } .glass-card { padding: 20px; } .dashboard-stats { flex-direction: column; gap: 10px; } .controls-bar { flex-direction: column; } .main-content { padding: 15px; }
     .admin-layout { flex-direction: column; } .sidebar { height: auto; width: 100%; padding: 10px 15px; flex-direction: row; justify-content: space-between; align-items: center; border-bottom: 2px solid #1e293b; background: rgba(15, 23, 42, 0.95); backdrop-filter: blur(10px); }
-    .sidebar .logo img { width: 40px; height: 40px; margin: 0; display: inline-block; } .sidebar-logo { border: none !important; margin: 0 !important; padding: 0 !important; display: flex; align-items: center; } .sidebar-text { display: none; } .nav-links { flex-direction: row; gap: 5px; } .nav-links li { padding: 8px 10px; font-size: 13px; margin: 0; } .mobile-logout { margin-top: 0 !important; }
+    .sidebar .logo img { width: 40px; height: 40px; margin: 0; display: inline-block; } .sidebar-logo { border: none !important; margin: 0 !important; padding: 0 !important; display: flex; align-items: center; gap: 10px; } .sidebar-text { display: none; } .nav-links { flex-direction: row; gap: 5px; } .nav-links li { padding: 8px 10px; font-size: 13px; margin: 0; } .mobile-logout { margin-top: 0 !important; }
 }
