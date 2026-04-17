@@ -5,11 +5,21 @@ if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'admin') { header("Loc
 
 $message = "";
 
+// Check if this admin is the Principal (Super Admin)
+$isSuperAdmin = (isset($_SESSION['email']) && $_SESSION['email'] === 'principal@gcekjr.ac.in');
+
+// Dynamic Logo Logic
+$customLogo = 'uploads/site_logo.png';
+$defaultLogo = 'assets/images/logo.png';
+$displayLogo = file_exists($customLogo) ? $customLogo . '?v=' . filemtime($customLogo) : $defaultLogo;
+
+// Resolve Complaint
 if (isset($_GET['resolve_id'])) {
     $conn->query("UPDATE complaints SET status='Resolved' WHERE id=".intval($_GET['resolve_id']));
     header("Location: admin.php"); exit();
 }
 
+// Add New Admin
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['add_admin'])) {
     $adminName = $conn->real_escape_string($_POST['adminName']); $empId = $conn->real_escape_string($_POST['empId']); 
     $email = $conn->real_escape_string($_POST['adminEmail']); $password = password_hash($_POST['adminPass'], PASSWORD_DEFAULT);
@@ -19,6 +29,19 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['add_admin'])) {
         if ($conn->query("INSERT INTO users (role, full_name, reg_no, email, password) VALUES ('admin', '$adminName', '$empId', '$email', '$password')") === TRUE) {
             $message = "<script>document.addEventListener('DOMContentLoaded', function() { Swal.fire({icon: 'success', title: 'Admin Created!'}); });</script>";
         } else { $message = "<script>document.addEventListener('DOMContentLoaded', function() { Swal.fire({icon: 'error', title: 'Error', text: 'Already exists!'}); });</script>"; }
+    }
+}
+
+// Super Admin Update Logo
+if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['update_logo']) && $isSuperAdmin) {
+    if (isset($_FILES['newLogo']) && $_FILES['newLogo']['error'] == 0) {
+        $allowedTypes = ['image/png', 'image/jpeg', 'image/jpg'];
+        if (in_array($_FILES['newLogo']['type'], $allowedTypes)) {
+            move_uploaded_file($_FILES['newLogo']['tmp_name'], $customLogo);
+            $message = "<script>document.addEventListener('DOMContentLoaded', function() { Swal.fire({icon: 'success', title: 'Logo Updated!', text: 'The global website logo has been changed.'}).then(() => { window.location.href = 'admin.php'; }); });</script>";
+        } else {
+            $message = "<script>document.addEventListener('DOMContentLoaded', function() { Swal.fire({icon: 'error', title: 'Invalid Format', text: 'Please upload a PNG or JPG file.'}); });</script>";
+        }
     }
 }
 
@@ -45,10 +68,15 @@ $resolved = $conn->query("SELECT COUNT(*) as count FROM complaints WHERE status=
 <body class="admin-layout">
     <?php echo $message; ?>
     <aside class="sidebar">
-        <div class="logo sidebar-logo"><img src="assets/images/logo.png" alt="Logo"><div class="sidebar-text">GCE Keonjhar<br><span>Government College</span></div></div>
+        <div class="logo sidebar-logo"><img src="<?php echo $displayLogo; ?>" alt="Logo"><div class="sidebar-text">GCE Keonjhar<br><span>Government College</span></div></div>
         <ul class="nav-links">
             <li id="tab-complaints" class="active" onclick="switchTab('complaints')">📊 All Complaints</li>
             <li id="tab-admin" onclick="switchTab('admin')">👨‍💼 Add Admin</li>
+            
+            <?php if ($isSuperAdmin): ?>
+            <li id="tab-settings" onclick="switchTab('settings')" style="background: rgba(234, 179, 8, 0.1); color: #eab308;">⚙️ Site Settings</li>
+            <?php endif; ?>
+
             <li><a href="logout.php" style="color:white; text-decoration:none; display:block;" class="logout mobile-logout">🚪 Logout</a></li>
         </ul>
     </aside>
@@ -59,7 +87,9 @@ $resolved = $conn->query("SELECT COUNT(*) as count FROM complaints WHERE status=
             <div style="display: flex; align-items: center; gap: 15px;">
                 <button class="btn-outline btn-small" onclick="window.print()">🖨️ Print Report</button>
                 <button id="themeBtn" onclick="toggleTheme()" class="theme-toggle" style="background: var(--glass-bg); padding: 5px 10px; border-radius: 8px;">🌙</button>
-                <div class="admin-profile">Admin: <?php echo $_SESSION['full_name']; ?> 👤</div>
+                <div class="admin-profile">
+                    <?php echo $isSuperAdmin ? '👑 Principal' : '👤 Admin'; ?>: <?php echo $_SESSION['full_name']; ?>
+                </div>
             </div>
         </header>
 
@@ -118,12 +148,42 @@ $resolved = $conn->query("SELECT COUNT(*) as count FROM complaints WHERE status=
                 </form>
             </div>
         </div>
+
+        <?php if ($isSuperAdmin): ?>
+        <div id="section-settings" style="display: none;">
+            <div class="glass-card fade-in" style="max-width: 600px; margin: 0 auto; border-top: 5px solid #eab308;">
+                <h3 style="color: #ca8a04;">👑 Super Admin Settings</h3>
+                <p style="color: var(--text-light); margin-bottom: 20px;">Upload a new image here to change the global website logo for all users instantly.</p>
+                
+                <form method="POST" action="" enctype="multipart/form-data">
+                    <input type="hidden" name="update_logo" value="1">
+                    <label>Upload New Logo (PNG or JPG)</label>
+                    <input type="file" name="newLogo" accept="image/png, image/jpeg" required>
+                    <button type="submit" class="btn-primary w-100 mt-20" style="background: #ca8a04;">Update Global Logo</button>
+                </form>
+            </div>
+        </div>
+        <?php endif; ?>
+
     </main>
 
     <script src="assets/js/script.js"></script>
     <script>
         new Chart(document.getElementById('statusChart').getContext('2d'), { type: 'doughnut', data: { labels: ['Pending', 'Resolved'], datasets: [{ data: [<?php echo $pending; ?>, <?php echo $resolved; ?>], backgroundColor: ['#eab308', '#22c55e'], borderWidth: 0 }] }, options: { cutout: '70%', plugins: { legend: { display: false } } } });
-        function switchTab(t) { ['complaints','admin'].forEach(x => { document.getElementById('section-'+x).style.display = (x===t)?'block':'none'; document.getElementById('tab-'+x).classList[(x===t)?'add':'remove']('active'); }); document.getElementById('page-title').innerText = (t==='complaints')?"Admin Dashboard":"Admin Management"; }
+        
+        function switchTab(t) { 
+            ['complaints','admin', 'settings'].forEach(x => { 
+                let sec = document.getElementById('section-'+x);
+                let tab = document.getElementById('tab-'+x);
+                if(sec && tab) {
+                    sec.style.display = (x===t)?'block':'none'; 
+                    tab.classList[(x===t)?'add':'remove']('active'); 
+                }
+            }); 
+            
+            let titles = { 'complaints': 'Admin Dashboard', 'admin': 'Admin Management', 'settings': 'Site Settings' };
+            document.getElementById('page-title').innerText = titles[t]; 
+        }
         function filterLiveTable() { let s=document.getElementById("searchInput").value.toLowerCase(), st=document.getElementById("filterStatus").value; document.querySelectorAll(".complaint-row").forEach(r => { let match = r.innerText.toLowerCase().includes(s) && (st==="All" || r.getAttribute("data-status")===st); r.style.display = match ? "" : "none"; }); }
     </script>
 </body>
