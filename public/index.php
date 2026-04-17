@@ -4,8 +4,10 @@ require '../config/db.php';
 
 $message = "";
 $customLogo = 'uploads/site_logo.png';
-$defaultLogo = 'assets/images/logo.png';
-$displayLogo = file_exists($customLogo) ? $customLogo . '?v=' . filemtime($customLogo) : $defaultLogo;
+$displayLogo = file_exists($customLogo) ? $customLogo . '?v=' . filemtime($customLogo) : 'assets/images/logo.png';
+
+$customNameFile = 'uploads/site_name.txt';
+$displaySiteName = file_exists($customNameFile) ? htmlspecialchars(file_get_contents($customNameFile)) : 'Government College of Engineering, Keonjhar';
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $role = $conn->real_escape_string($_POST['loginRole']);
@@ -22,7 +24,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $_SESSION['full_name'] = $user['full_name'];
             $_SESSION['reg_no'] = $user['reg_no'];
             $_SESSION['role'] = $user['role'];
-            $_SESSION['email'] = $user['email']; // Crucial for Super Admin check
+            $_SESSION['email'] = $user['email'];
             header("Location: " . ($role === 'student' ? "student.php" : "admin.php"));
             exit();
         } else {
@@ -39,7 +41,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - GCE Keonjhar</title>
+    <title>Login</title>
     <link rel="stylesheet" href="assets/css/style.css">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
@@ -58,7 +60,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <div class="center-layout">
         <div class="glass-card login-box fade-in">
             <img src="<?php echo $displayLogo; ?>" alt="Logo" class="college-logo">
-            <h2 class="title" style="font-size: 20px;">Government College of Engineering, Keonjhar</h2>
+            <h2 class="title" style="font-size: 20px;"><?php echo $displaySiteName; ?></h2>
             <p class="subtitle">Complaint Management Portal</p>
 
             <form method="POST" action="">
@@ -74,7 +76,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 <label style="text-align: left;">Password</label>
                 <input type="password" name="loginPass" placeholder="••••••••" required>
 
-                <button type="submit" class="btn-primary w-100 mt-20">Login</button>
+                <button type="submit" class="btn-primary w-100 mt-20">Secure Login</button>
             </form>
             <p style="margin-top: 15px; font-size: 14px;">Don't have an account? <a href="signup.php" style="color: var(--primary); font-weight: bold;">Sign Up Here</a></p>
         </div>
