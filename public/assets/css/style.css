@@ -3,20 +3,15 @@
 :root {
     --primary: #0d9488; 
     --primary-hover: #0f766e; 
-    
-    /* DAY MODE: LIQUID BACKGROUND MESH */
     --bg-gradient: linear-gradient(45deg, #e0f2fe, #ccfbf1, #bae6fd, #f8fafc);
-    
     --text-main: #0f172a; 
     --text-light: #475569; 
     
-    /* DAY MODE: LIQUID GLASS VARIABLES */
     --glass-bg: rgba(255, 255, 255, 0.35);
     --glass-border: rgba(255, 255, 255, 0.5);
     --nav-bg: rgba(255, 255, 255, 0.4);
     --input-bg: rgba(255, 255, 255, 0.6);
     
-    /* DAY MODE: SOFT FLOATING SHADOWS */
     --shadow-advanced: 
         0 8px 32px rgba(13, 148, 136, 0.1),
         inset 0 1px 0 rgba(255, 255, 255, 0.7),
@@ -33,17 +28,15 @@ body.dark-mode {
     --text-main: #f8fafc; 
     --text-light: #94a3b8; 
     
-    /* NIGHT MODE: DARK GLASS */
     --glass-bg: rgba(15, 23, 42, 0.2);
     --glass-border: rgba(255, 255, 255, 0.05);
     --nav-bg: rgba(2, 6, 23, 0.4);
     --input-bg: rgba(15, 23, 42, 0.5);
     
-    /* NIGHT MODE: 3D SHADOWS POINTING TOWARDS INSIDE (NEUMORPHISM) */
     --shadow-advanced: 
         inset 12px 12px 24px rgba(0, 0, 0, 0.8),
         inset -10px -10px 24px rgba(255, 255, 255, 0.03),
-        0 4px 10px rgba(0, 0, 0, 0.4); /* Deep inside carve */
+        0 4px 10px rgba(0, 0, 0, 0.4); 
         
     --reflect-top: transparent;
     --reflect-left: transparent;
@@ -57,9 +50,6 @@ html { scroll-behavior: smooth; }
     transition: background-color 0.5s, color 0.5s, transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.4s ease; 
 }
 
-/* =========================================================
-   LIQUID BACKGROUND ANIMATION (DAY MODE ONLY)
-   ========================================================= */
 body { 
     background: var(--bg-gradient); 
     background-size: 400% 400%;
@@ -68,9 +58,7 @@ body {
     min-height: 100vh; 
     background-attachment: fixed; 
 }
-body:not(.dark-mode) {
-    animation: liquidBg 15s ease infinite;
-}
+body:not(.dark-mode) { animation: liquidBg 15s ease infinite; }
 
 @keyframes liquidBg {
     0% { background-position: 0% 50%; }
@@ -86,15 +74,13 @@ a { text-decoration: none; color: inherit; transition: color 0.2s;}
 @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 @keyframes slideUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
 
-/* =========================================================
-   THE GLASS CARD (DAY: LIQUID 3D | NIGHT: INWARD 3D)
-   ========================================================= */
+/* GLASS CARD */
 .glass-card { 
     background: var(--glass-bg); 
     backdrop-filter: blur(16px) saturate(150%); 
     -webkit-backdrop-filter: blur(16px) saturate(150%);
     padding: 35px; 
-    border-radius: 32px; /* Perfect circular corners */
+    border-radius: 32px;
     border: 1px solid var(--glass-border); 
     box-shadow: var(--shadow-advanced); 
     position: relative;
@@ -102,17 +88,12 @@ a { text-decoration: none; color: inherit; transition: color 0.2s;}
     z-index: 1;
 }
 
-/* DAY MODE: 3D LIQUID VISUALIZATION INSIDE CARDS */
 body:not(.dark-mode) .glass-card::before {
-    content: '';
-    position: absolute;
-    top: -30%; left: -20%; width: 150%; height: 150%;
+    content: ''; position: absolute; top: -30%; left: -20%; width: 150%; height: 150%;
     background: radial-gradient(circle, rgba(45, 212, 191, 0.4) 0%, rgba(255,255,255,0) 60%);
     border-radius: 40% 60% 70% 30% / 40% 50% 60% 50%;
     animation: liquidBlob 10s infinite alternate ease-in-out;
-    z-index: -1;
-    pointer-events: none;
-    filter: blur(20px);
+    z-index: -1; pointer-events: none; filter: blur(20px);
 }
 
 @keyframes liquidBlob {
@@ -120,19 +101,13 @@ body:not(.dark-mode) .glass-card::before {
     100% { transform: translateY(15%) scale(1.1) rotate(25deg); border-radius: 60% 40% 30% 70% / 50% 60% 40% 50%; }
 }
 
-/* Edge Lighting Reflections (Day Only) */
 .glass-card::after {
     content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px;
     background: var(--reflect-top); pointer-events: none;
 }
-
-/* Lift on hover */
 .glass-card:hover { transform: translateY(-4px); }
 
-/* ========================================================= */
-
 .login-box { width: 100%; max-width: 480px; text-align: center; border-radius: 40px;}
-
 .center-layout { display: flex; justify-content: center; align-items: center; min-height: calc(100vh - 80px); padding: 20px; }
 .college-logo { width: 100px; height: 100px; object-fit: contain; background-color: rgba(255,255,255,0.9); backdrop-filter: blur(10px); padding: 8px; border-radius: 50%; margin: 0 auto 20px auto; display: block; box-shadow: 0 8px 25px rgba(0,0,0,0.1); border: 2px solid var(--glass-border);}
 
@@ -142,32 +117,39 @@ body:not(.dark-mode) .glass-card::before {
 .nav-logo-box { display: flex; align-items: center; font-size: 18px; font-weight: 800;}
 .nav-mini-logo { width: 45px; height: 45px; object-fit: contain; background: white; border-radius: 50%; padding: 4px; margin-right: 15px; border: 1px solid var(--glass-border); box-shadow: 0 4px 10px rgba(0,0,0,0.1);}
 
-/* STUDENT AVATAR */
 .student-avatar { width: 45px; height: 45px; border-radius: 50%; object-fit: cover; border: 2px solid var(--primary); background: var(--input-bg); cursor: pointer; transition: transform 0.3s; box-shadow: 0 4px 15px rgba(13, 148, 136, 0.3); position: relative; z-index: 10;}
 .student-avatar:hover { transform: scale(1.15) rotate(5deg); }
 
-.theme-toggle { background: var(--glass-bg); border: 1px solid var(--glass-border); padding: 8px 12px; border-radius: 16px; font-size: 18px; cursor: pointer; color: var(--text-main); backdrop-filter: blur(10px); position: relative; z-index: 10;}
+.theme-toggle { background: var(--glass-bg); border: 1px solid var(--glass-border); padding: 8px 12px; border-radius: 50px; font-size: 18px; cursor: pointer; color: var(--text-main); backdrop-filter: blur(10px); position: relative; z-index: 10;}
 .theme-toggle:hover { transform: scale(1.1); color: var(--primary); background: var(--input-bg);}
 
 label { display: block; font-weight: 700; font-size: 13px; text-transform: uppercase; letter-spacing: 0.5px; margin: 15px 0 8px 0; color: var(--text-light); }
 
-/* INPUTS: Night mode gets inward shadows */
-input, select, textarea { width: 100%; padding: 14px 16px; border: 1px solid var(--glass-border); border-radius: 16px; background: var(--input-bg); color: var(--text-main); font-size: 15px; font-weight: 500; }
+/* NEW DROPDOWN & INPUT STYLES */
+input, select, textarea { width: 100%; padding: 14px 16px; border: 1px solid var(--glass-border); border-radius: 16px; background: var(--input-bg); color: var(--text-main); font-size: 15px; font-weight: 500; cursor: pointer; }
 body.dark-mode input, body.dark-mode select, body.dark-mode textarea { box-shadow: inset 4px 4px 10px rgba(0,0,0,0.6), inset -4px -4px 10px rgba(255,255,255,0.02); }
-input:focus, select:focus, textarea:focus { border-color: var(--primary); outline: none; background: var(--glass-bg); box-shadow: 0 0 0 4px rgba(13, 148, 136, 0.15); }
-textarea { height: 120px; resize: vertical; }
 
-button { cursor: pointer; border: none; font-weight: 700; font-size: 15px; border-radius: 16px; padding: 14px 24px; letter-spacing: 0.5px; position: relative; z-index: 10;}
+/* The Zoom Animation for the Dropdown Box */
+input:focus, select:focus, textarea:focus { border-color: var(--primary); outline: none; background: var(--glass-bg); transform: scale(1.02); box-shadow: 0 8px 25px rgba(13, 148, 136, 0.2); }
+textarea { height: 120px; resize: vertical; cursor: text; }
+input { cursor: text; }
+
+/* The Color Styling for the Dropdown Options */
+option { font-weight: 600; padding: 10px; }
+body.dark-mode option { background-color: #0f172a; color: #f8fafc; }
+body:not(.dark-mode) option { background-color: #ffffff; color: #0f172a; }
+
+/* FIX: Circular Pill Buttons everywhere */
+button { cursor: pointer; border: none; font-weight: 700; font-size: 15px; border-radius: 50px; padding: 14px 24px; letter-spacing: 0.5px; position: relative; z-index: 10;}
 .btn-primary { background: var(--primary); color: white; box-shadow: 0 6px 20px rgba(13, 148, 136, 0.3); }
 .btn-primary:hover { background: var(--primary-hover); transform: translateY(-3px); box-shadow: 0 8px 25px rgba(13, 148, 136, 0.4); }
 .btn-outline { background: var(--glass-bg); border: 2px solid var(--primary); color: var(--primary); backdrop-filter: blur(10px);}
 .btn-outline:hover { background: var(--primary); color: white; transform: translateY(-2px);}
-.btn-small { padding: 8px 16px; font-size: 14px; }
+.btn-small { padding: 8px 20px; font-size: 14px; }
 
 .dashboard-container { max-width: 1400px; width: 95%; margin: 40px auto; padding: 0; }
 .input-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
 
-/* COMPLAINTS CARDS */
 .complaints-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 25px;}
 .c-card { border-left: 6px solid #eab308; background: var(--glass-bg); backdrop-filter: blur(16px); padding: 25px; border-radius: 24px; border-top: 1px solid var(--glass-border); border-right: 1px solid var(--glass-border); border-bottom: 1px solid var(--glass-border); box-shadow: var(--shadow-advanced);}
 .c-card:hover { transform: translateY(-4px); }
@@ -180,9 +162,6 @@ body.dark-mode .badge-pending { color: #fde047; } body.dark-mode .badge-resolved
 body.dark-mode .attachment-badge { box-shadow: inset 2px 2px 5px rgba(0,0,0,0.5); }
 .attachment-badge:hover { background: var(--primary); color: white; transform: translateY(-2px);}
 
-/* =========================================================
-   ADMIN LAYOUT
-   ========================================================= */
 .admin-layout { display: flex; align-items: flex-start; min-height: 100vh; }
 
 .sidebar { 
@@ -222,7 +201,7 @@ body.dark-mode .nav-links li.active { box-shadow: inset 4px 4px 10px rgba(0,0,0,
 body.dark-mode .modern-table th { background: rgba(255,255,255,0.03); }
 .modern-table tr:hover td { background: rgba(13, 148, 136, 0.05); }
 
-.admin-profile { background: var(--glass-bg); padding: 10px 20px; border-radius: 30px; font-weight: 800; border: 1px solid var(--glass-border); box-shadow: 0 4px 15px rgba(0,0,0,0.05); color: var(--primary);}
+.admin-profile { background: var(--glass-bg); padding: 10px 20px; border-radius: 50px; font-weight: 800; border: 1px solid var(--glass-border); box-shadow: 0 4px 15px rgba(0,0,0,0.05); color: var(--primary);}
 body.dark-mode .admin-profile { box-shadow: inset 4px 4px 10px rgba(0,0,0,0.5); }
 
 @media print { .sidebar, .controls-bar, .admin-header, .analytics-panel { display: none !important; } body { background: white; color: black; } .glass-card { box-shadow: none; border: none; backdrop-filter: none;} }
