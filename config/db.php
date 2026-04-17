@@ -1,11 +1,12 @@
+// File: config/db.php
 <?php
-// Securely grab database credentials from Render's Environment Variables
+// Securely grab credentials from Render's Environment Variables
 $servername = getenv("DB_HOST");
 $username = getenv("DB_USER");
 $password = getenv("DB_PASS");
 $dbname = getenv("DB_NAME");
 
-// If running locally (fallback)
+// Fallback for local testing (can be empty or placeholders)
 if (!$servername) {
     $servername = "localhost";
     $username = "root";
