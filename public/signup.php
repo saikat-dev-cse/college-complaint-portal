@@ -3,8 +3,10 @@ require '../config/db.php';
 $message = "";
 
 $customLogo = 'uploads/site_logo.png';
-$defaultLogo = 'assets/images/logo.png';
-$displayLogo = file_exists($customLogo) ? $customLogo . '?v=' . filemtime($customLogo) : $defaultLogo;
+$displayLogo = file_exists($customLogo) ? $customLogo . '?v=' . filemtime($customLogo) : 'assets/images/logo.png';
+
+$customNameFile = 'uploads/site_name.txt';
+$displaySiteName = file_exists($customNameFile) ? htmlspecialchars(file_get_contents($customNameFile)) : 'Government College of Engineering, Keonjhar';
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $name = $conn->real_escape_string($_POST['regName']);
@@ -20,7 +22,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $sql = "INSERT INTO users (role, full_name, reg_no, email, password) VALUES ('$role', '$name', '$regNo', '$email', '$hashed_password')";
 
         if ($conn->query($sql) === TRUE) {
-            $message = "<script>document.addEventListener('DOMContentLoaded', function() { Swal.fire({icon: 'success', title: 'Registration Successful!', text: 'Welcome to GCE Keonjhar Portal. Please login now.', confirmButtonColor: '#0f766e'}).then(() => { window.location.href = 'index.php'; }); });</script>";
+            $message = "<script>document.addEventListener('DOMContentLoaded', function() { Swal.fire({icon: 'success', title: 'Registration Successful!', text: 'Welcome to the Portal. Please login now.', confirmButtonColor: '#0f766e'}).then(() => { window.location.href = 'index.php'; }); });</script>";
         } else {
             $message = "<script>document.addEventListener('DOMContentLoaded', function() { Swal.fire({icon: 'warning', title: 'Registration Failed', text: 'This Registration Number or Email is already registered!', confirmButtonColor: '#0f766e'}); });</script>";
         }
@@ -33,7 +35,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sign Up - GCE Keonjhar</title>
+    <title>Sign Up</title>
     <link rel="stylesheet" href="assets/css/style.css">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
@@ -52,7 +54,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <div class="center-layout">
         <div class="glass-card login-box fade-in">
             <img src="<?php echo $displayLogo; ?>" alt="Logo" class="college-logo">
-            <h2 class="title" style="font-size: 20px;">Government College of Engineering, Keonjhar</h2>
+            <h2 class="title" style="font-size: 20px;"><?php echo $displaySiteName; ?></h2>
             <p class="subtitle">Create Your Account</p>
 
             <form method="POST" action="">
