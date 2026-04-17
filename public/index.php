@@ -35,7 +35,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 }
 ?>
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -49,7 +48,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <?php echo $message; ?>
 
     <nav class="top-nav">
-        <div class="logo nav-logo-box"><img src="<?php echo $displayLogo; ?>" alt="Logo" class="nav-mini-logo"><span>Complaint Portal</span></div>
+        <div class="logo nav-logo-box"><img src="<?php echo $displayLogo; ?>" alt="Logo" class="nav-mini-logo"><span>Grievance Portal</span></div>
         <div style="display: flex; align-items: center; gap: 10px;">
             <button id="themeBtn" onclick="toggleTheme()" class="theme-toggle">🌙</button>
             <a href="index.php" class="btn-primary btn-small">Login</a>
