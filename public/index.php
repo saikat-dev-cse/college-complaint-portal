@@ -69,11 +69,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     <option value="admin">Faculty / Admin</option>
                 </select>
 
-                <label style="text-align: left;">Email or Reg. No</label>
-                <input type="text" name="loginEmail" placeholder="2101010000 / your@gcekjr.ac.in" required>
+                 <label style="text-align: left;">Email or Reg. No</label>
+                 <input type="text" name="loginEmail" placeholder="e.g., 2101010000 or your@gcekjr.ac.in" required>
 
-                <label style="text-align: left;">Password</label>
-                <input type="password" name="loginPass" placeholder="••••••••" required>
+                 <label style="text-align: left;">Password</label>
+                 <input type="password" name="loginPass" placeholder="Enter your password" required>
 
                 <button type="submit" class="btn-primary w-100 mt-20">Secure Login</button>
             </form>
