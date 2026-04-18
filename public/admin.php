@@ -1,191 +1,259 @@
-<?php
-session_start();
-require '../config/db.php';
-if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'admin') { header("Location: index.php"); exit(); }
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
 
-$message = "";
-
-// Check if this admin is the Principal (Super Admin)
-$isSuperAdmin = (isset($_SESSION['email']) && $_SESSION['email'] === 'principal@gcekjr.ac.in');
-
-$customLogo = 'uploads/site_logo.png';
-$displayLogo = file_exists($customLogo) ? $customLogo . '?v=' . filemtime($customLogo) : 'assets/images/logo.png';
-$customNameFile = 'uploads/site_name.txt';
-$displaySiteName = file_exists($customNameFile) ? htmlspecialchars(file_get_contents($customNameFile)) : 'Government College of Engineering, Keonjhar';
-
-if (isset($_GET['resolve_id'])) {
-    $conn->query("UPDATE complaints SET status='Resolved' WHERE id=".intval($_GET['resolve_id']));
-    header("Location: admin.php"); exit();
+:root {
+    --primary: #8b5cf6; 
+    --primary-hover: #7c3aed; 
+    --primary-shadow: #5b21b6;
+    
+    --bg-gradient: linear-gradient(45deg, #f3e8ff, #e9d5ff, #ddd6fe, #ede9fe);
+    --text-main: #000000; 
+    --text-light: #334155; 
+    
+    --glass-bg: rgba(255, 255, 255, 0.4);
+    --glass-border: rgba(255, 255, 255, 0.6);
+    --nav-bg: rgba(255, 255, 255, 0.5);
+    --input-bg: rgba(255, 255, 255, 0.7);
+    
+    --shadow-advanced: 
+        0 8px 32px rgba(139, 92, 246, 0.15),
+        inset 0 1px 0 rgba(255, 255, 255, 0.8),
+        inset 0 -1px 0 rgba(255, 255, 255, 0.3);
+        
+    --reflect-top: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.9), transparent);
 }
 
-// SECURITY FIX: Only the Principal can add new admins
-if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['add_admin']) && $isSuperAdmin) {
-    $adminName = $conn->real_escape_string($_POST['adminName']); $empId = $conn->real_escape_string($_POST['empId']); 
-    $email = $conn->real_escape_string($_POST['adminEmail']); $password = password_hash($_POST['adminPass'], PASSWORD_DEFAULT);
-    if (!str_ends_with($email, '@gcekjr.ac.in')) {
-        $message = "<script>document.addEventListener('DOMContentLoaded', function() { Swal.fire({icon: 'error', title: 'Invalid Email'}); });</script>";
-    } else {
-        if ($conn->query("INSERT INTO users (role, full_name, reg_no, email, password) VALUES ('admin', '$adminName', '$empId', '$email', '$password')") === TRUE) {
-            $message = "<script>document.addEventListener('DOMContentLoaded', function() { Swal.fire({icon: 'success', title: 'Staff Created!'}); });</script>";
-        } else { $message = "<script>document.addEventListener('DOMContentLoaded', function() { Swal.fire({icon: 'error', title: 'Error', text: 'Email/ID already exists!'}); });</script>"; }
-    }
+body.dark-mode {
+    --primary: #a78bfa; 
+    --primary-hover: #c4b5fd; 
+    --primary-shadow: #4c1d95;
+    
+    --bg-gradient: linear-gradient(135deg, #020617 0%, #0f172a 50%, #2e1065 100%);
+    --text-main: #ffffff; 
+    --text-light: #cbd5e1; 
+    
+    --glass-bg: rgba(15, 23, 42, 0.4);
+    --glass-border: rgba(255, 255, 255, 0.1);
+    --nav-bg: rgba(2, 6, 23, 0.5);
+    --input-bg: rgba(15, 23, 42, 0.85); 
+    
+    --shadow-advanced: 
+        inset 12px 12px 24px rgba(0, 0, 0, 0.6),
+        inset -10px -10px 24px rgba(255, 255, 255, 0.03),
+        0 4px 10px rgba(0, 0, 0, 0.4); 
+        
+    --reflect-top: transparent;
 }
 
-if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['update_settings']) && $isSuperAdmin) {
-    if (isset($_FILES['newLogo']) && $_FILES['newLogo']['error'] == 0) {
-        $allowedTypes = ['image/png', 'image/jpeg', 'image/jpg'];
-        if (in_array($_FILES['newLogo']['type'], $allowedTypes)) {
-            move_uploaded_file($_FILES['newLogo']['tmp_name'], $customLogo);
-        }
-    }
-    if (!empty($_POST['newSiteName'])) { file_put_contents($customNameFile, strip_tags($_POST['newSiteName'])); }
-    $message = "<script>document.addEventListener('DOMContentLoaded', function() { Swal.fire({icon: 'success', title: 'Platform Branding Updated!'}).then(() => { window.location.href = 'admin.php'; }); });</script>";
+/* =========================================================
+   BASE RESETS & THE ULTIMATE OVERFLOW FIX
+   ========================================================= */
+html, body { 
+    margin: 0; padding: 0; box-sizing: border-box;
+    overflow-x: hidden; /* KILLS HORIZONTAL SCROLLING BUG */
+    max-width: 100vw;
+    font-family: 'Plus Jakarta Sans', Tahoma, sans-serif; 
+}
+* { box-sizing: inherit; transition: background-color 0.3s, color 0.3s; }
+
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--primary); border-radius: 10px; }
+
+body { 
+    background: var(--bg-gradient); color: var(--text-main); 
+    line-height: 1.6; min-height: 100dvh; background-attachment: fixed; 
+}
+body:not(.dark-mode) { animation: liquidBg 15s ease infinite; }
+@keyframes liquidBg { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
+
+h2, h3 { color: var(--text-main); margin-bottom: 15px; letter-spacing: -0.5px; font-weight: 800;}
+a { text-decoration: none; color: inherit;}
+p, span, label, div { color: var(--text-main); } 
+
+.mt-20 { margin-top: clamp(10px, 2vw, 20px); } .mb-40 { margin-bottom: clamp(20px, 4vw, 40px); } .w-100 { width: 100%; }
+
+.fade-in { animation: fadeIn 0.6s ease forwards; transform: translateZ(0); will-change: opacity; } 
+.slide-up { animation: slideUp 0.6s ease forwards; opacity: 0; transform: translateZ(0); will-change: transform, opacity;}
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+@keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+/* =========================================================
+   FORM ELEMENTS
+   ========================================================= */
+label { display: block; font-weight: 800; font-size: clamp(12px, 1vw, 13px); text-transform: uppercase; letter-spacing: 0.5px; margin: 15px 0 8px 0; }
+
+input, select, textarea { 
+    width: 100%; padding: 14px 16px; border: 1px solid var(--glass-border); 
+    border-radius: 16px; background: var(--input-bg); color: var(--text-main); 
+    font-size: 15px; font-weight: 700; cursor: pointer; 
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+input::placeholder, textarea::placeholder { color: #94a3b8; font-weight: 500; opacity: 0.8; }
+body.dark-mode input::placeholder { color: #64748b; }
+body.dark-mode input, body.dark-mode select, body.dark-mode textarea { box-shadow: inset 4px 4px 10px rgba(0,0,0,0.6), inset -4px -4px 10px rgba(255,255,255,0.02); }
+
+input:-webkit-autofill { -webkit-box-shadow: 0 0 0 30px var(--input-bg) inset !important; -webkit-text-fill-color: var(--text-main) !important; }
+input:focus, textarea:focus { border-color: var(--primary); outline: none; background: var(--glass-bg); transform: scale(1.02) translateY(-2px); box-shadow: 0 15px 35px rgba(139, 92, 246, 0.25); z-index: 20; position: relative; }
+select:focus { border-color: var(--primary) !important; outline: none !important; background: var(--glass-bg) !important; box-shadow: 0 0 0 4px rgba(139, 92, 246, 0.3) !important; }
+textarea { height: 120px; resize: vertical; cursor: text; } input { cursor: text; }
+
+option { font-weight: 700; padding: 12px; font-size: 15px; }
+body:not(.dark-mode) option { background-color: #f3e8ff; color: #000000; }
+body.dark-mode option { background-color: #0f172a; color: #ffffff; }
+
+a.btn-primary, a.btn-outline, button, .btn-primary, .btn-outline { 
+    cursor: pointer; font-weight: 800; font-size: clamp(14px, 1.5vw, 15px); border-radius: 50px !important; 
+    padding: 14px 28px; letter-spacing: 0.5px; position: relative; z-index: 10; display: inline-block; text-align: center;
+    transition: all 0.15s ease !important;
+}
+.btn-primary { background: var(--primary); border: 2px solid var(--primary); color: white; box-shadow: 0 6px 0 var(--primary-shadow), 0 10px 20px rgba(0,0,0,0.15) !important; }
+.btn-primary:hover { background: var(--primary-hover); color: white; transform: translateY(2px) !important; box-shadow: 0 4px 0 var(--primary-shadow), 0 8px 15px rgba(0,0,0,0.2) !important; }
+.btn-primary:active { transform: translateY(6px) !important; box-shadow: 0 0 0 var(--primary-shadow), inset 0 3px 5px rgba(0,0,0,0.3) !important; }
+
+.btn-outline { background: var(--glass-bg); border: 2px solid var(--primary); color: var(--text-main); backdrop-filter: blur(10px); box-shadow: 0 4px 0 var(--primary-shadow), 0 8px 15px rgba(0,0,0,0.1) !important;}
+.btn-outline:hover { background: var(--primary); color: white; transform: translateY(2px) !important; box-shadow: 0 2px 0 var(--primary-shadow), 0 6px 10px rgba(0,0,0,0.15) !important;}
+.btn-outline:active { transform: translateY(4px) !important; box-shadow: 0 0 0 var(--primary-shadow), inset 0 3px 5px rgba(0,0,0,0.2) !important;}
+.btn-small { padding: 10px 24px; font-size: 13px; }
+
+.c-badge { display: inline-block; padding: 6px 12px; border-radius: 30px !important; font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px;}
+.badge-pending { background: rgba(234, 179, 8, 0.15); color: #b45309; border: 1px solid rgba(234, 179, 8, 0.3);}
+.badge-resolved { background: rgba(34, 197, 94, 0.15); color: #15803d; border: 1px solid rgba(34, 197, 94, 0.3);}
+body.dark-mode .badge-pending { color: #fde047; } body.dark-mode .badge-resolved { color: #86efac; }
+
+/* =========================================================
+   COMPONENTS
+   ========================================================= */
+.glass-card { 
+    background: var(--glass-bg); backdrop-filter: blur(16px) saturate(150%); -webkit-backdrop-filter: blur(16px) saturate(150%);
+    padding: clamp(20px, 4vw, 35px); border-radius: clamp(24px, 3vw, 32px); border: 1px solid var(--glass-border); 
+    box-shadow: var(--shadow-advanced); position: relative; overflow: hidden; z-index: 1; transform: translateZ(0); 
+}
+.glass-card::after { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px; background: var(--reflect-top); pointer-events: none; }
+
+/* Pure CSS Blob for massive performance boost */
+body:not(.dark-mode) .glass-card::before {
+    content: ''; position: absolute; top: -30%; left: -20%; width: 150%; height: 150%;
+    background: radial-gradient(circle, rgba(167, 139, 250, 0.4) 0%, rgba(255,255,255,0) 60%);
+    border-radius: 40% 60% 70% 30% / 40% 50% 60% 50%; animation: liquidBlob 10s infinite alternate ease-in-out;
+    z-index: -1; pointer-events: none; filter: blur(25px);
+}
+@keyframes liquidBlob {
+    0% { transform: scale(1) rotate(0deg); border-radius: 40% 60% 70% 30% / 40% 50% 60% 50%; }
+    100% { transform: scale(1.1) rotate(25deg); border-radius: 60% 40% 30% 70% / 50% 60% 40% 50%; }
 }
 
-$total = $conn->query("SELECT COUNT(*) as count FROM complaints")->fetch_assoc()['count'];
-$pending = $conn->query("SELECT COUNT(*) as count FROM complaints WHERE status='Pending'")->fetch_assoc()['count'];
-$resolved = $conn->query("SELECT COUNT(*) as count FROM complaints WHERE status='Resolved'")->fetch_assoc()['count'];
-?>
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Dashboard</title>
-    <link rel="stylesheet" href="assets/css/style.css">
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-</head>
-<body class="admin-layout">
-    <?php echo $message; ?>
-    <aside class="sidebar">
-        <div class="logo sidebar-logo"><img src="<?php echo $displayLogo; ?>" alt="Logo"><div class="sidebar-text"><?php echo $displaySiteName; ?></div></div>
-        <ul class="nav-links">
-            <li id="tab-complaints" class="active" onclick="switchTab('complaints')">📊 All Complaints</li>
-            
-            <?php if ($isSuperAdmin): ?>
-            <li id="tab-admin" onclick="switchTab('admin')">👨‍💼 Add Staff</li>
-            <li id="tab-settings" onclick="switchTab('settings')" style="background: rgba(234, 179, 8, 0.1); color: #eab308;">⚙️ Site Settings</li>
-            <?php endif; ?>
-            
-            <li class="logout mobile-logout"><a href="logout.php" style="color:inherit; display:block; width:100%;">🚪 Logout</a></li>
-        </ul>
-    </aside>
+.college-logo { width: clamp(80px, 10vw, 100px); height: clamp(80px, 10vw, 100px); object-fit: contain; background-color: rgba(255,255,255,0.9); backdrop-filter: blur(10px); padding: 8px; border-radius: 50%; margin: 0 auto 20px auto; display: block; box-shadow: 0 8px 25px rgba(0,0,0,0.1); border: 2px solid var(--glass-border);}
 
-    <main class="main-content fade-in">
-        <header class="admin-header">
-            <h2 id="page-title">Admin Dashboard</h2>
-            <div style="display: flex; align-items: center; gap: 15px;">
-                <button class="btn-outline btn-small" onclick="exportTableToCSV('complaints_report.csv')">📊 Export Excel</button>
-                <button class="btn-outline btn-small" onclick="window.print()">🖨️ Print PDF</button>
-                <button id="themeBtn" onclick="toggleTheme()" class="theme-toggle">🌙</button>
-                <div class="admin-profile">
-                    <?php echo $isSuperAdmin ? 'Principal' : 'Staff'; ?>: <?php echo $_SESSION['full_name']; ?>
-                </div>
-            </div>
-        </header>
+.top-nav { position: sticky; top: 0; z-index: 1000; display: flex; justify-content: space-between; align-items: center; padding: 12px 5%; background: var(--nav-bg); backdrop-filter: blur(20px) saturate(180%); -webkit-backdrop-filter: blur(20px); box-shadow: 0 4px 30px rgba(0,0,0,0.05); border-bottom: 1px solid var(--glass-border); transform: translateZ(0);}
+.nav-logo-box { display: flex; align-items: center; font-size: clamp(16px, 2vw, 18px); font-weight: 800;}
+.nav-mini-logo { width: clamp(35px, 4vw, 45px); height: clamp(35px, 4vw, 45px); object-fit: contain; background: white; border-radius: 50%; padding: 4px; margin-right: 12px; border: 1px solid var(--glass-border); box-shadow: 0 4px 10px rgba(0,0,0,0.1);}
 
-        <div id="section-complaints">
-            <div class="analytics-panel glass-card" style="padding: 20px; display:flex; gap:20px; align-items:center;">
-                <div class="stats-grid" style="flex:1; display:flex; flex-direction:column; gap:10px;">
-                    <div class="stat-card">Total Grievances: <strong><?php echo $total; ?></strong></div>
-                    <div class="stat-card">Pending: <strong style="color:#d97706;"><?php echo $pending; ?></strong></div>
-                    <div class="stat-card">Resolved: <strong style="color:#16a34a;"><?php echo $resolved; ?></strong></div>
-                </div>
-                <div style="width: 150px; height: 150px; padding: 10px;"><canvas id="statusChart"></canvas></div>
-            </div>
+.student-avatar { width: clamp(50px, 6vw, 70px); height: clamp(50px, 6vw, 70px); border-radius: 50%; object-fit: cover; border: 3px solid var(--primary); background: var(--input-bg); cursor: pointer; transition: transform 0.3s; box-shadow: 0 4px 15px rgba(139, 92, 246, 0.4); position: relative; z-index: 10;}
+.student-avatar:hover { transform: scale(1.1) rotate(5deg); }
 
-            <div class="admin-table-container glass-card mb-40 mt-20">
-                <div class="controls-bar">
-                    <input type="text" id="searchInput" placeholder="🔍 Search Name or Reg No... (e.g. 21010100)" onkeyup="filterLiveTable()" style="flex:1;">
-                    <select id="filterStatus" onchange="filterLiveTable()" style="flex:1;"><option value="All">All Grievances</option><option value="Pending">Pending</option><option value="Resolved">Resolved</option></select>
-                </div>
-                <div class="table-responsive mt-20">
-                    <table class="modern-table" id="complaintsTable">
-                        <thead><tr><th>Student Info</th><th>Category</th><th>Details</th><th>Status</th><th>Action</th></tr></thead>
-                        <tbody>
-                            <?php
-                            $result = $conn->query("SELECT * FROM complaints ORDER BY created_at DESC");
-                            if ($result->num_rows > 0) {
-                                while($row = $result->fetch_assoc()) {
-                                    $sClass = ($row['status'] == 'Pending') ? 'badge-pending' : 'badge-resolved';
-                                    $att = ($row['file_name'] !== "None") ? "<br><a href='uploads/{$row['file_name']}' download class='attachment-badge' style='margin-top:8px;'>⬇️ Proof</a>" : "";
-                                    $btn = ($row['status'] == 'Pending') ? "<a href='admin.php?resolve_id={$row['id']}' class='btn-primary btn-small'>Resolve</a>" : "<span style='color:#166534; font-weight:bold;'>✔ Resolved</span>";
-                                    $pStyle = ($row['priority'] == 'High') ? "color:red; font-weight:bold;" : "color:var(--text-light);";
+.theme-toggle { background: var(--glass-bg); border: 1px solid var(--glass-border); padding: 8px 12px; border-radius: 50px; font-size: clamp(16px, 2vw, 20px); cursor: pointer; color: var(--text-main); backdrop-filter: blur(10px); position: relative; z-index: 10; transition: transform 0.2s;}
+.theme-toggle:hover { transform: scale(1.1); color: var(--primary); background: var(--input-bg);}
 
-                                    echo "<tr class='complaint-row' data-status='{$row['status']}'>
-                                        <td><strong>{$row['name']}</strong><br><small class='searchable-text'>{$row['reg_no']}</small><br><small style='color:var(--text-light);'>{$row['branch']} ({$row['study_year']})</small></td>
-                                        <td>{$row['category']}<br><small style='$pStyle'>Urgency: {$row['priority']}</small></td>
-                                        <td style='max-width: 280px; font-size: 13px;'>{$row['description']}$att</td>
-                                        <td><span class='c-badge $sClass'>{$row['status']}</span></td>
-                                        <td>$btn</td>
-                                    </tr>";
-                                }
-                            } else { echo "<tr><td colspan='5' align='center'>No complaints found.</td></tr>"; }
-                            ?>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
+/* =========================================================
+   LOGIN / SIGNUP LAYOUT
+   ========================================================= */
+.center-layout { display: flex; justify-content: center; align-items: center; min-height: calc(100dvh - 80px); padding: clamp(15px, 4vw, 20px); }
+.login-box { width: 100%; max-width: 480px; min-height: clamp(550px, 70vh, 620px); display: flex; flex-direction: column; justify-content: center; align-items: stretch; text-align: center; border-radius: clamp(30px, 4vw, 40px); }
+.input-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: clamp(10px, 2vw, 20px); }
 
-        <?php if ($isSuperAdmin): ?>
-        <div id="section-admin" style="display: none;">
-            <div class="glass-card fade-in" style="max-width: 600px; margin: 0 auto;">
-                <h3 style="color: var(--primary);">🛡️ Register New Staff</h3>
-                <form method="POST" action=""><input type="hidden" name="add_admin" value="1">
-                    <div class="input-grid">
-                        <div><label>Staff Name</label><input type="text" name="adminName" placeholder="e.g., Amit Sharma" required></div>
-                        <div><label>Emp ID</label><input type="text" name="empId" placeholder="e.g., EMP-204" required></div>
-                    </div>
-                    <label>College Email</label><input type="email" name="adminEmail" placeholder="e.g., amit.sharma@gcekjr.ac.in" required>
-                    <label>Assign Password</label><input type="password" name="adminPass" placeholder="Create a strong password" required>
-                    <button type="submit" class="btn-primary w-100 mt-20">Create Staff Account</button>
-                </form>
-            </div>
-        </div>
+/* =========================================================
+   ADMIN LAYOUT & HAMBURGER MENU
+   ========================================================= */
+.admin-layout { display: grid; grid-template-columns: 280px 1fr; min-height: 100dvh; align-items: start;}
 
-        <div id="section-settings" style="display: none;">
-            <div class="glass-card fade-in" style="max-width: 600px; margin: 0 auto; border-top: 5px solid #eab308;">
-                <h3 style="color: #ca8a04; display: flex; align-items: center; gap: 10px;">⚙️ Global Site Settings</h3>
-                <p style="color: var(--text-light); margin-bottom: 20px;">Upload a new image or change the college name to update the platform branding globally for all users instantly.</p>
-                <form method="POST" action="" enctype="multipart/form-data">
-                    <input type="hidden" name="update_settings" value="1">
-                    <label>College/Site Name</label>
-                    <input type="text" name="newSiteName" value="<?php echo $displaySiteName; ?>" placeholder="e.g., GCE Keonjhar" required>
-                    <label style="margin-top: 15px;">Website Logo (Optional: PNG or JPG)</label>
-                    <input type="file" name="newLogo" accept="image/png, image/jpeg">
-                    <button type="submit" class="btn-primary w-100 mt-20" style="background: #ca8a04; border-color: #ca8a04;">Update Platform Branding</button>
-                </form>
-            </div>
-        </div>
-        <?php endif; ?>
+.sidebar { 
+    position: sticky; top: 0; height: 100dvh; background: var(--glass-bg); 
+    backdrop-filter: blur(25px) saturate(180%); -webkit-backdrop-filter: blur(25px);
+    padding: 30px 20px; display: flex; flex-direction: column; z-index: 1000; 
+    border-right: 1px solid var(--glass-border); overflow-y: auto; transition: left 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+}
+.sidebar-logo { display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding-bottom: 25px; border-bottom: 1px solid var(--glass-border); margin-bottom: 25px; }
+.sidebar .logo img { width: 85px; height: 85px; object-fit: contain; background: rgba(255,255,255,0.9); border-radius: 50%; padding: 8px; margin-bottom: 15px; box-shadow: 0 8px 20px rgba(0,0,0,0.1); border: 2px solid var(--glass-border);}
+.sidebar-text { display: block; font-size: clamp(14px, 1.2vw, 15px); font-weight: 800; line-height: 1.4;}
 
-    </main>
+/* UNIFORM TEXT COLOR FOR SIDEBAR LINKS */
+.nav-links { list-style: none; display: flex; flex-direction: column; gap: 10px; position: relative; z-index: 10;}
+.nav-links li { padding: 14px 18px; border-radius: 16px; cursor: pointer; font-weight: 800; font-size: 15px; border: 1px solid transparent; transition: all 0.2s; color: var(--text-main); }
+.nav-links li:hover { background: var(--input-bg); color: var(--primary); border-color: var(--glass-border); transform: translateX(8px);}
+.nav-links li.active { background: var(--primary); color: white; box-shadow: 0 6px 15px rgba(139, 92, 246, 0.3); border-color: var(--primary);}
+body.dark-mode .nav-links li.active { box-shadow: inset 4px 4px 10px rgba(0,0,0,0.3); border: none; }
 
-    <script src="assets/js/script.js"></script>
-    <script>
-        new Chart(document.getElementById('statusChart').getContext('2d'), { type: 'doughnut', data: { labels: ['Pending', 'Resolved'], datasets: [{ data: [<?php echo $pending; ?>, <?php echo $resolved; ?>], backgroundColor: ['#eab308', '#22c55e'], borderWidth: 0, hoverOffset: 4 }] }, options: { cutout: '75%', plugins: { legend: { display: false } } } });
-        function switchTab(t) { 
-            ['complaints','admin', 'settings'].forEach(x => { 
-                let sec = document.getElementById('section-'+x); let tab = document.getElementById('tab-'+x);
-                if(sec && tab) { sec.style.display = (x===t)?'block':'none'; tab.classList[(x===t)?'add':'remove']('active'); }
-            }); 
-            let titles = { 'complaints': 'All Grievances', 'admin': 'Staff Management', 'settings': 'Site Settings' };
-            document.getElementById('page-title').innerText = titles[t]; 
-        }
-        function filterLiveTable() { let s=document.getElementById("searchInput").value.toLowerCase(), st=document.getElementById("filterStatus").value; document.querySelectorAll(".complaint-row").forEach(r => { let match = r.innerText.toLowerCase().includes(s) && (st==="All" || r.getAttribute("data-status")===st); r.style.display = match ? "" : "none"; }); }
-        function exportTableToCSV(filename) {
-            let csv = []; let rows = document.querySelectorAll("#complaintsTable tr");
-            for (let i = 0; i < rows.length; i++) {
-                let row = [], cols = rows[i].querySelectorAll("td, th");
-                for (let j = 0; j < cols.length - 1; j++) { row.push('"' + cols[j].innerText.replace(/"/g, '""') + '"'); }
-                csv.push(row.join(","));
-            }
-            let csvFile = new Blob([csv.join("\n")], {type: "text/csv"});
-            let downloadLink = document.createElement("a"); downloadLink.download = filename; downloadLink.href = window.URL.createObjectURL(csvFile);
-            downloadLink.style.display = "none"; document.body.appendChild(downloadLink); downloadLink.click();
-        }
-    </script>
-</body>
-</html>
+/* THE DARK BLUE CSS PULSE (No JS required) */
+.nav-links li.logout { margin-top: auto; text-align: center; animation: darkBluePulse 4s infinite alternate ease-in-out; }
+@keyframes darkBluePulse {
+    0% { background: transparent; color: var(--text-main); box-shadow: none; border-color: transparent;}
+    100% { background: #1e3a8a; color: white; box-shadow: 0 6px 15px rgba(30, 58, 138, 0.4); border-color: #1e3a8a;}
+}
+body.dark-mode @keyframes darkBluePulse {
+    0% { background: transparent; color: var(--text-main); }
+    100% { background: #1e40af; color: white; box-shadow: 0 6px 15px rgba(30, 64, 175, 0.4); border-color: #1e40af;}
+}
+
+/* HAMBURGER & OVERLAY (Mobile Only) */
+.hamburger-btn { 
+    display: none; background: var(--glass-bg); border: 1px solid var(--glass-border);
+    color: var(--text-main); font-size: 22px; padding: 6px 12px; border-radius: 12px; 
+    cursor: pointer; z-index: 1001; box-shadow: var(--shadow-advanced);
+}
+.sidebar-overlay { 
+    display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100dvh; 
+    background: rgba(0,0,0,0.4); z-index: 999; backdrop-filter: blur(3px); 
+}
+.sidebar-overlay.active { display: block; }
+
+.main-content { padding: clamp(20px, 4vw, 40px); min-width: 0; display: flex; flex-direction: column; gap: 20px;}
+.admin-header { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 20px;}
+.admin-header > div { display: flex; align-items: center; gap: 15px; flex-wrap: wrap;}
+
+.dashboard-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: clamp(15px, 2vw, 20px); }
+.stat-card { background: var(--glass-bg); padding: 25px; border-radius: 24px; font-size: 15px; font-weight: 800; box-shadow: var(--shadow-advanced); border: 1px solid var(--glass-border); backdrop-filter: blur(16px); transform: translateZ(0);}
+.stat-card strong { font-size: clamp(28px, 3vw, 36px); color: var(--primary); display: block; margin-top: 8px;}
+.stat-card.pending strong { color: #d97706; } .stat-card.resolved strong { color: #16a34a; }
+
+.controls-bar { display: flex; gap: 15px; flex-wrap: wrap;}
+.controls-bar input, .controls-bar select { flex: 1; min-width: 200px; margin: 0; background: var(--input-bg); backdrop-filter: blur(5px); z-index: 10;}
+
+.table-responsive { overflow-x: auto; -webkit-overflow-scrolling: touch; width: 100%; border-radius: 24px; border: 1px solid var(--glass-border); background: var(--glass-bg); backdrop-filter: blur(16px); box-shadow: var(--shadow-advanced); transform: translateZ(0);}
+.modern-table { width: 100%; border-collapse: collapse; min-width: 700px; }
+.modern-table th, .modern-table td { padding: 20px; text-align: left; border-bottom: 1px solid var(--glass-border); font-size: 14px; font-weight: 600;}
+.modern-table th { background: rgba(0,0,0,0.03); font-weight: 800; text-transform: uppercase; font-size: 12px; letter-spacing: 0.5px;}
+body.dark-mode .modern-table th { background: rgba(255,255,255,0.03); }
+.modern-table tr:hover td { background: rgba(139, 92, 246, 0.05); }
+
+.admin-profile { background: var(--glass-bg); padding: 12px 24px; border-radius: 50px; font-weight: 800; border: 1px solid var(--glass-border); box-shadow: 0 4px 15px rgba(0,0,0,0.05); color: var(--primary);}
+body.dark-mode .admin-profile { box-shadow: inset 4px 4px 10px rgba(0,0,0,0.5); }
+
+
+/* =========================================================
+   ULTIMATE MOBILE RESPONSIVE MEDIA QUERIES
+   ========================================================= */
+@media (max-width: 850px) {
+    /* ADMIN HAMBURGER MENU ACTIVATION */
+    .hamburger-btn { display: inline-block; }
+    .admin-layout { display: block; }
+    
+    .sidebar { position: fixed; left: -320px; top: 0; height: 100dvh; width: 280px; z-index: 1000; box-shadow: none; }
+    .sidebar.open { left: 0; box-shadow: 10px 0 30px rgba(0,0,0,0.3); }
+    
+    .admin-header { justify-content: flex-start; gap: 15px; }
+    
+    /* LOGIN NAV FIX: Hides "Grievance Portal" text so buttons fit */
+    .nav-logo-box span { display: none; }
+    .top-nav { padding: 10px 15px; }
+    .top-nav > div { gap: 6px; }
+    .btn-small { padding: 8px 14px; font-size: 13px; }
+    .theme-toggle { padding: 6px 10px; font-size: 16px; }
+    
+    .hide-mobile { display: none !important; }
+}
+
+@media (max-width: 480px) {
+    .dashboard-stats { grid-template-columns: 1fr; }
+    .controls-bar input, .controls-bar select { min-width: 100%; }
+    .btn-primary, .btn-outline { width: 100%; }
+}
