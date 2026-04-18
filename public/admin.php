@@ -8,54 +8,44 @@ $message = "";
 // Check if this admin is the Principal (Super Admin)
 $isSuperAdmin = (isset($_SESSION['email']) && $_SESSION['email'] === 'principal@gcekjr.ac.in');
 
-// Dynamic Logo & Name Logic (The Pro Branding System)
 $customLogo = 'uploads/site_logo.png';
 $displayLogo = file_exists($customLogo) ? $customLogo . '?v=' . filemtime($customLogo) : 'assets/images/logo.png';
-
 $customNameFile = 'uploads/site_name.txt';
-// Uses the stored name or falls back to your original college name
 $displaySiteName = file_exists($customNameFile) ? htmlspecialchars(file_get_contents($customNameFile)) : 'Government College of Engineering, Keonjhar';
 
-// 1. Resolve Complaint
 if (isset($_GET['resolve_id'])) {
     $conn->query("UPDATE complaints SET status='Resolved' WHERE id=".intval($_GET['resolve_id']));
     header("Location: admin.php"); exit();
 }
 
-// 2. Add New Admin
-if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['add_admin'])) {
+// SECURITY FIX: Only the Principal can add new admins
+if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['add_admin']) && $isSuperAdmin) {
     $adminName = $conn->real_escape_string($_POST['adminName']); $empId = $conn->real_escape_string($_POST['empId']); 
     $email = $conn->real_escape_string($_POST['adminEmail']); $password = password_hash($_POST['adminPass'], PASSWORD_DEFAULT);
     if (!str_ends_with($email, '@gcekjr.ac.in')) {
         $message = "<script>document.addEventListener('DOMContentLoaded', function() { Swal.fire({icon: 'error', title: 'Invalid Email'}); });</script>";
     } else {
         if ($conn->query("INSERT INTO users (role, full_name, reg_no, email, password) VALUES ('admin', '$adminName', '$empId', '$email', '$password')") === TRUE) {
-            $message = "<script>document.addEventListener('DOMContentLoaded', function() { Swal.fire({icon: 'success', title: 'Admin Created!'}); });</script>";
-        } else { $message = "<script>document.addEventListener('DOMContentLoaded', function() { Swal.fire({icon: 'error', title: 'Error', text: 'Already exists!'}); });</script>"; }
+            $message = "<script>document.addEventListener('DOMContentLoaded', function() { Swal.fire({icon: 'success', title: 'Staff Created!'}); });</script>";
+        } else { $message = "<script>document.addEventListener('DOMContentLoaded', function() { Swal.fire({icon: 'error', title: 'Error', text: 'Email/ID already exists!'}); });</script>"; }
     }
 }
 
-// 3. Super Admin Update Logo & Name (The Secret Feature)
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['update_settings']) && $isSuperAdmin) {
-    // Update Logo
     if (isset($_FILES['newLogo']) && $_FILES['newLogo']['error'] == 0) {
         $allowedTypes = ['image/png', 'image/jpeg', 'image/jpg'];
         if (in_array($_FILES['newLogo']['type'], $allowedTypes)) {
             move_uploaded_file($_FILES['newLogo']['tmp_name'], $customLogo);
         }
     }
-    // Update Site Name
-    if (!empty($_POST['newSiteName'])) {
-        file_put_contents($customNameFile, strip_tags($_POST['newSiteName']));
-    }
-    $message = "<script>document.addEventListener('DOMContentLoaded', function() { Swal.fire({icon: 'success', title: 'Platform Branding Updated!', text: 'The global logo and college name have been changed.'}).then(() => { window.location.href = 'admin.php'; }); });</script>";
+    if (!empty($_POST['newSiteName'])) { file_put_contents($customNameFile, strip_tags($_POST['newSiteName'])); }
+    $message = "<script>document.addEventListener('DOMContentLoaded', function() { Swal.fire({icon: 'success', title: 'Platform Branding Updated!'}).then(() => { window.location.href = 'admin.php'; }); });</script>";
 }
 
 $total = $conn->query("SELECT COUNT(*) as count FROM complaints")->fetch_assoc()['count'];
 $pending = $conn->query("SELECT COUNT(*) as count FROM complaints WHERE status='Pending'")->fetch_assoc()['count'];
 $resolved = $conn->query("SELECT COUNT(*) as count FROM complaints WHERE status='Resolved'")->fetch_assoc()['count'];
 ?>
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -72,13 +62,13 @@ $resolved = $conn->query("SELECT COUNT(*) as count FROM complaints WHERE status=
         <div class="logo sidebar-logo"><img src="<?php echo $displayLogo; ?>" alt="Logo"><div class="sidebar-text"><?php echo $displaySiteName; ?></div></div>
         <ul class="nav-links">
             <li id="tab-complaints" class="active" onclick="switchTab('complaints')">📊 All Complaints</li>
-            <li id="tab-admin" onclick="switchTab('admin')">👨‍💼 Add Admin</li>
             
             <?php if ($isSuperAdmin): ?>
+            <li id="tab-admin" onclick="switchTab('admin')">👨‍💼 Add Staff</li>
             <li id="tab-settings" onclick="switchTab('settings')" style="background: rgba(234, 179, 8, 0.1); color: #eab308;">⚙️ Site Settings</li>
             <?php endif; ?>
-
-            <li><a href="logout.php" style="color:white; font-weight:bold;" class="logout mobile-logout">🚪 Logout</a></li>
+            
+            <li class="logout mobile-logout"><a href="logout.php" style="color:inherit; display:block; width:100%;">🚪 Logout</a></li>
         </ul>
     </aside>
 
@@ -86,30 +76,29 @@ $resolved = $conn->query("SELECT COUNT(*) as count FROM complaints WHERE status=
         <header class="admin-header">
             <h2 id="page-title">Admin Dashboard</h2>
             <div style="display: flex; align-items: center; gap: 15px;">
-                <button class="btn-outline btn-small" onclick="exportTableToCSV('complaints_report.csv')" style="border-color: #16a34a; color: #16a34a;">📊 Export Excel (CSV)</button>
+                <button class="btn-outline btn-small" onclick="exportTableToCSV('complaints_report.csv')">📊 Export Excel</button>
                 <button class="btn-outline btn-small" onclick="window.print()">🖨️ Print PDF</button>
                 <button id="themeBtn" onclick="toggleTheme()" class="theme-toggle">🌙</button>
-                
                 <div class="admin-profile">
-                    <?php echo $isSuperAdmin ? 'Principal' : 'Admin'; ?>: <?php echo $_SESSION['full_name']; ?>
+                    <?php echo $isSuperAdmin ? 'Principal' : 'Staff'; ?>: <?php echo $_SESSION['full_name']; ?>
                 </div>
             </div>
         </header>
 
         <div id="section-complaints">
-            <div class="analytics-panel glass-card" style="padding: 20px; border-radius: 16px;">
-                <div class="stats-grid">
+            <div class="analytics-panel glass-card" style="padding: 20px; display:flex; gap:20px; align-items:center;">
+                <div class="stats-grid" style="flex:1; display:flex; flex-direction:column; gap:10px;">
                     <div class="stat-card">Total Grievances: <strong><?php echo $total; ?></strong></div>
-                    <div class="stat-card">Pending: <strong><?php echo $pending; ?></strong></div>
-                    <div class="stat-cardresolved" style="color:#16a34a;">Resolved: <strong><?php echo $resolved; ?></strong></div>
+                    <div class="stat-card">Pending: <strong style="color:#d97706;"><?php echo $pending; ?></strong></div>
+                    <div class="stat-card">Resolved: <strong style="color:#16a34a;"><?php echo $resolved; ?></strong></div>
                 </div>
                 <div style="width: 150px; height: 150px; padding: 10px;"><canvas id="statusChart"></canvas></div>
             </div>
 
-            <div class="admin-table-container glass-card mb-40">
+            <div class="admin-table-container glass-card mb-40 mt-20">
                 <div class="controls-bar">
-                    <input type="text" id="searchInput" placeholder="🔍 Search Name or Reg No..." onkeyup="filterLiveTable()">
-                    <select id="filterStatus" onchange="filterLiveTable()"><option value="All">All Grievances</option><option value="Pending">Pending</option><option value="Resolved">Resolved</option></select>
+                    <input type="text" id="searchInput" placeholder="🔍 Search Name or Reg No... (e.g. 21010100)" onkeyup="filterLiveTable()" style="flex:1;">
+                    <select id="filterStatus" onchange="filterLiveTable()" style="flex:1;"><option value="All">All Grievances</option><option value="Pending">Pending</option><option value="Resolved">Resolved</option></select>
                 </div>
                 <div class="table-responsive mt-20">
                     <table class="modern-table" id="complaintsTable">
@@ -140,33 +129,33 @@ $resolved = $conn->query("SELECT COUNT(*) as count FROM complaints WHERE status=
             </div>
         </div>
 
+        <?php if ($isSuperAdmin): ?>
         <div id="section-admin" style="display: none;">
-            <div class="glass-card fade-in" style="max-width: 600px; margin: 0 auto; border-radius: 20px;">
-                <h3 style="color: var(--primary);">🛡️ Register New Admin</h3>
+            <div class="glass-card fade-in" style="max-width: 600px; margin: 0 auto;">
+                <h3 style="color: var(--primary);">🛡️ Register New Staff</h3>
                 <form method="POST" action=""><input type="hidden" name="add_admin" value="1">
-                    <div class="input-grid"><div><label>Staff Name</label><input type="text" name="adminName" required></div><div><label>Emp ID</label><input type="text" name="empId" required></div></div>
-                    <label>College Email</label><input type="email" name="adminEmail" placeholder="@gcekjr.ac.in" required>
-                    <label>Assign Password</label><input type="password" name="adminPass" required>
+                    <div class="input-grid">
+                        <div><label>Staff Name</label><input type="text" name="adminName" placeholder="e.g., Amit Sharma" required></div>
+                        <div><label>Emp ID</label><input type="text" name="empId" placeholder="e.g., EMP-204" required></div>
+                    </div>
+                    <label>College Email</label><input type="email" name="adminEmail" placeholder="e.g., amit.sharma@gcekjr.ac.in" required>
+                    <label>Assign Password</label><input type="password" name="adminPass" placeholder="Create a strong password" required>
                     <button type="submit" class="btn-primary w-100 mt-20">Create Staff Account</button>
                 </form>
             </div>
         </div>
 
-        <?php if ($isSuperAdmin): ?>
         <div id="section-settings" style="display: none;">
-            <div class="glass-card fade-in" style="max-width: 600px; margin: 0 auto; border-top: 5px solid #eab308; border-radius: 20px;">
-                <h3 style="color: #ca8a04; display: flex; align-items: center; gap: 10px;">👑 Global Site Settings</h3>
+            <div class="glass-card fade-in" style="max-width: 600px; margin: 0 auto; border-top: 5px solid #eab308;">
+                <h3 style="color: #ca8a04; display: flex; align-items: center; gap: 10px;">⚙️ Global Site Settings</h3>
                 <p style="color: var(--text-light); margin-bottom: 20px;">Upload a new image or change the college name to update the platform branding globally for all users instantly.</p>
-                
                 <form method="POST" action="" enctype="multipart/form-data">
                     <input type="hidden" name="update_settings" value="1">
                     <label>College/Site Name</label>
-                    <input type="text" name="newSiteName" value="<?php echo $displaySiteName; ?>" required>
-                    
+                    <input type="text" name="newSiteName" value="<?php echo $displaySiteName; ?>" placeholder="e.g., GCE Keonjhar" required>
                     <label style="margin-top: 15px;">Website Logo (Optional: PNG or JPG)</label>
                     <input type="file" name="newLogo" accept="image/png, image/jpeg">
-                    
-                    <button type="submit" class="btn-primary w-100 mt-20" style="background: #ca8a04;">Update Platform Branding</button>
+                    <button type="submit" class="btn-primary w-100 mt-20" style="background: #ca8a04; border-color: #ca8a04;">Update Platform Branding</button>
                 </form>
             </div>
         </div>
@@ -177,30 +166,24 @@ $resolved = $conn->query("SELECT COUNT(*) as count FROM complaints WHERE status=
     <script src="assets/js/script.js"></script>
     <script>
         new Chart(document.getElementById('statusChart').getContext('2d'), { type: 'doughnut', data: { labels: ['Pending', 'Resolved'], datasets: [{ data: [<?php echo $pending; ?>, <?php echo $resolved; ?>], backgroundColor: ['#eab308', '#22c55e'], borderWidth: 0, hoverOffset: 4 }] }, options: { cutout: '75%', plugins: { legend: { display: false } } } });
-        
         function switchTab(t) { 
             ['complaints','admin', 'settings'].forEach(x => { 
                 let sec = document.getElementById('section-'+x); let tab = document.getElementById('tab-'+x);
                 if(sec && tab) { sec.style.display = (x===t)?'block':'none'; tab.classList[(x===t)?'add':'remove']('active'); }
             }); 
-            let titles = { 'complaints': 'All Grievances', 'admin': 'Admin Management', 'settings': 'Site Settings' };
+            let titles = { 'complaints': 'All Grievances', 'admin': 'Staff Management', 'settings': 'Site Settings' };
             document.getElementById('page-title').innerText = titles[t]; 
         }
         function filterLiveTable() { let s=document.getElementById("searchInput").value.toLowerCase(), st=document.getElementById("filterStatus").value; document.querySelectorAll(".complaint-row").forEach(r => { let match = r.innerText.toLowerCase().includes(s) && (st==="All" || r.getAttribute("data-status")===st); r.style.display = match ? "" : "none"; }); }
-        
-        // CSV EXPORT FUNCTION
         function exportTableToCSV(filename) {
-            let csv = [];
-            let rows = document.querySelectorAll("#complaintsTable tr");
+            let csv = []; let rows = document.querySelectorAll("#complaintsTable tr");
             for (let i = 0; i < rows.length; i++) {
                 let row = [], cols = rows[i].querySelectorAll("td, th");
-                // Skip the "Action" column at the end
                 for (let j = 0; j < cols.length - 1; j++) { row.push('"' + cols[j].innerText.replace(/"/g, '""') + '"'); }
                 csv.push(row.join(","));
             }
             let csvFile = new Blob([csv.join("\n")], {type: "text/csv"});
-            let downloadLink = document.createElement("a");
-            downloadLink.download = filename; downloadLink.href = window.URL.createObjectURL(csvFile);
+            let downloadLink = document.createElement("a"); downloadLink.download = filename; downloadLink.href = window.URL.createObjectURL(csvFile);
             downloadLink.style.display = "none"; document.body.appendChild(downloadLink); downloadLink.click();
         }
     </script>
