@@ -16,20 +16,19 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $role = "student"; 
 
     if (!str_ends_with($email, '@gcekjr.ac.in')) {
-        $message = "<script>document.addEventListener('DOMContentLoaded', function() { Swal.fire({icon: 'error', title: 'Invalid Email', text: 'Please register using your official college email.', confirmButtonColor: '#0f766e'}); });</script>";
+        $message = "<script>document.addEventListener('DOMContentLoaded', function() { Swal.fire({icon: 'error', title: 'Invalid Email', text: 'Please register using your official college email.', confirmButtonColor: '#8b5cf6'}); });</script>";
     } else {
         $hashed_password = password_hash($password, PASSWORD_DEFAULT);
         $sql = "INSERT INTO users (role, full_name, reg_no, email, password) VALUES ('$role', '$name', '$regNo', '$email', '$hashed_password')";
 
         if ($conn->query($sql) === TRUE) {
-            $message = "<script>document.addEventListener('DOMContentLoaded', function() { Swal.fire({icon: 'success', title: 'Registration Successful!', text: 'Welcome to the Portal. Please login now.', confirmButtonColor: '#0f766e'}).then(() => { window.location.href = 'index.php'; }); });</script>";
+            $message = "<script>document.addEventListener('DOMContentLoaded', function() { Swal.fire({icon: 'success', title: 'Registration Successful!', text: 'Welcome to the Portal. Please login now.', confirmButtonColor: '#8b5cf6'}).then(() => { window.location.href = 'index.php'; }); });</script>";
         } else {
-            $message = "<script>document.addEventListener('DOMContentLoaded', function() { Swal.fire({icon: 'warning', title: 'Registration Failed', text: 'This Registration Number or Email is already registered!', confirmButtonColor: '#0f766e'}); });</script>";
+            $message = "<script>document.addEventListener('DOMContentLoaded', function() { Swal.fire({icon: 'warning', title: 'Registration Failed', text: 'This Registration Number or Email is already registered!', confirmButtonColor: '#8b5cf6'}); });</script>";
         }
     }
 }
 ?>
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -59,13 +58,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
             <form method="POST" action="">
                 <div class="input-grid">
-                    <div><label style="text-align: left;">Full Name</label><input type="text" name="regName" placeholder=" Rahul Kumar" required></div>
-                    <div><label style="text-align: left;">Reg. Number</label><input type="text" name="regNo" placeholder="2101010000" required></div>
+                    <div><label style="text-align: left;">Full Name</label><input type="text" name="regName" placeholder="e.g., Rahul Kumar" required></div>
+                    <div><label style="text-align: left;">Reg. Number</label><input type="text" name="regNo" placeholder="e.g., 2101010000" required></div>
                 </div>
                 <label style="text-align: left;">College Email Address</label>
-                <input type="email" name="regEmail" placeholder="must end with @gcekjr.ac.in" required>
+                <input type="email" name="regEmail" placeholder="e.g., rahul.kumar@gcekjr.ac.in" required>
                 <label style="text-align: left;">Create Password</label>
-                <input type="password" name="regPass" placeholder="Strong password" required>
+                <input type="password" name="regPass" placeholder="Create a strong password" required>
                 <button type="submit" class="btn-primary w-100 mt-20">Create Account</button>
             </form>
             <p style="margin-top: 15px; font-size: 14px;">Already registered? <a href="index.php" style="color: var(--primary); font-weight: bold;">Login Here</a></p>
