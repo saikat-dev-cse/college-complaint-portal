@@ -76,7 +76,6 @@ body {
     min-height: 100vh; 
     background-attachment: fixed; 
 }
-/* Liquid Background Animation */
 body:not(.dark-mode) { animation: liquidBg 15s ease infinite; }
 
 @keyframes liquidBg {
@@ -87,7 +86,7 @@ body:not(.dark-mode) { animation: liquidBg 15s ease infinite; }
 
 h2, h3 { color: var(--text-main); margin-bottom: 15px; letter-spacing: -0.5px; font-weight: 800;}
 a { text-decoration: none; color: inherit;}
-p, span, label, div { color: var(--text-main); } /* Forces pure black/white */
+p, span, label, div { color: var(--text-main); } 
 
 .mt-20 { margin-top: 20px; } .mb-40 { margin-bottom: 40px; } .w-100 { width: 100%; }
 
@@ -97,7 +96,7 @@ p, span, label, div { color: var(--text-main); } /* Forces pure black/white */
 @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 @keyframes slideUp { from { opacity: 0; transform: translateY(30px) translateZ(0); } to { opacity: 1; transform: translateY(0) translateZ(0); } }
 
-/* GLASS CARD (Optimized for no lag) */
+/* GLASS CARD */
 .glass-card { 
     background: var(--glass-bg); 
     backdrop-filter: blur(16px) saturate(150%); 
@@ -109,11 +108,10 @@ p, span, label, div { color: var(--text-main); } /* Forces pure black/white */
     position: relative;
     overflow: hidden;
     z-index: 1;
-    transform: translateZ(0); /* Kills the scroll lag */
+    transform: translateZ(0); 
     transition: transform 0.3s ease;
 }
 
-/* GPU OPTIMIZED LIQUID BLOB (Violet) */
 body:not(.dark-mode) .glass-card::before {
     content: ''; position: absolute; top: -30%; left: -20%; width: 150%; height: 150%;
     background: radial-gradient(circle, rgba(167, 139, 250, 0.4) 0%, rgba(255,255,255,0) 60%);
@@ -136,16 +134,10 @@ body:not(.dark-mode) .glass-card::before {
 }
 .glass-card:hover { transform: translateY(-4px) translateZ(0); }
 
-/* FIX: LOGIN & SIGNUP ARE NOW EXACTLY THE SAME SIZE */
 .login-box { 
-    width: 100%; 
-    max-width: 480px; 
-    min-height: 620px; /* Forces identical height */
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    text-align: center; 
-    border-radius: 40px;
+    width: 100%; max-width: 480px; min-height: 620px;
+    display: flex; flex-direction: column; justify-content: center;
+    text-align: center; border-radius: 40px;
 }
 
 .center-layout { display: flex; justify-content: center; align-items: center; min-height: calc(100vh - 80px); padding: 20px; }
@@ -165,102 +157,52 @@ body:not(.dark-mode) .glass-card::before {
 
 label { display: block; font-weight: 800; font-size: 13px; text-transform: uppercase; letter-spacing: 0.5px; margin: 15px 0 8px 0; color: var(--text-main); }
 
-/* =========================================================
-   INPUTS & OS CRASH FIX FOR DROPDOWNS
-   ========================================================= */
+/* INPUTS */
 input, select, textarea { 
     width: 100%; padding: 14px 16px; border: 1px solid var(--glass-border); 
     border-radius: 16px; background: var(--input-bg); color: var(--text-main); 
     font-size: 15px; font-weight: 700; cursor: pointer; 
     transition: transform 0.2s cubic-bezier(0.25, 1, 0.5, 1), box-shadow 0.2s;
 }
-body.dark-mode input, body.dark-mode select, body.dark-mode textarea { 
-    box-shadow: inset 4px 4px 10px rgba(0,0,0,0.6), inset -4px -4px 10px rgba(255,255,255,0.02); 
-}
+body.dark-mode input, body.dark-mode select, body.dark-mode textarea { box-shadow: inset 4px 4px 10px rgba(0,0,0,0.6), inset -4px -4px 10px rgba(255,255,255,0.02); }
 
-/* Chrome Autofill fix */
 input:-webkit-autofill, input:-webkit-autofill:hover, input:-webkit-autofill:focus, input:-webkit-autofill:active{
     -webkit-box-shadow: 0 0 0 30px var(--input-bg) inset !important;
     -webkit-text-fill-color: var(--text-main) !important;
     transition: background-color 5000s ease-in-out 0s;
 }
 
-/* Text Inputs get Zoom */
 input:focus, textarea:focus { 
     border-color: var(--primary); outline: none; background: var(--glass-bg); 
     transform: scale(1.03) translateY(-2px); 
-    box-shadow: 0 15px 35px rgba(139, 92, 246, 0.25); 
-    z-index: 20; position: relative;
+    box-shadow: 0 15px 35px rgba(139, 92, 246, 0.25); z-index: 20; position: relative;
 }
 
-/* FIX: ZERO ANIMATION ON SELECT TO PREVENT BLACK SCREEN CRASH */
-select, select:focus, select:active, select:hover {
-    transition: none !important;
-    transform: none !important;
-    animation: none !important;
-}
-select:focus {
-    border-color: var(--primary) !important; 
-    outline: none !important; 
-    background: var(--glass-bg) !important;
-    box-shadow: 0 0 0 4px rgba(139, 92, 246, 0.3) !important;
-}
-
+select, select:focus, select:active, select:hover { transition: none !important; transform: none !important; animation: none !important; }
+select:focus { border-color: var(--primary) !important; outline: none !important; background: var(--glass-bg) !important; box-shadow: 0 0 0 4px rgba(139, 92, 246, 0.3) !important; }
 textarea { height: 120px; resize: vertical; cursor: text; }
 input { cursor: text; }
-
-/* Dropdown Options */
 option { font-weight: 700; padding: 12px; font-size: 15px; }
 body:not(.dark-mode) option { background-color: #f3e8ff; color: #000000; }
 body.dark-mode option { background-color: #0f172a; color: #ffffff; }
 
-/* =========================================================
-   3D PHYSICAL BUTTONS (PILL SHAPED)
-   ========================================================= */
+/* 3D BUTTONS */
 a.btn-primary, a.btn-outline, button, .btn-primary, .btn-outline { 
-    cursor: pointer; font-weight: 800; font-size: 15px; 
-    border-radius: 50px !important; 
-    padding: 14px 28px; letter-spacing: 0.5px; 
-    position: relative; z-index: 10; display: inline-block; text-align: center;
-    /* 3D Base State */
-    transition: all 0.15s ease !important; /* Fast response */
+    cursor: pointer; font-weight: 800; font-size: 15px; border-radius: 50px !important; 
+    padding: 14px 28px; letter-spacing: 0.5px; position: relative; z-index: 10; display: inline-block; text-align: center;
+    transition: all 0.15s ease !important;
 }
 
-/* 3D Primary Button */
-.btn-primary { 
-    background: var(--primary); color: white; border: none;
-    box-shadow: 0 6px 0 var(--primary-shadow), 0 10px 20px rgba(0,0,0,0.15) !important; 
-}
-.btn-primary:hover { 
-    background: var(--primary-hover); color: white;
-    transform: translateY(2px) !important; 
-    box-shadow: 0 4px 0 var(--primary-shadow), 0 8px 15px rgba(0,0,0,0.2) !important; 
-}
-.btn-primary:active {
-    transform: translateY(6px) !important; /* Physical push down */
-    box-shadow: 0 0 0 var(--primary-shadow), inset 0 3px 5px rgba(0,0,0,0.3) !important;
-}
+.btn-primary { background: var(--primary); border: 2px solid var(--primary); color: white; box-shadow: 0 6px 0 var(--primary-shadow), 0 10px 20px rgba(0,0,0,0.15) !important; }
+.btn-primary:hover { background: var(--primary-hover); color: white; transform: translateY(2px) !important; box-shadow: 0 4px 0 var(--primary-shadow), 0 8px 15px rgba(0,0,0,0.2) !important; }
+.btn-primary:active { transform: translateY(6px) !important; box-shadow: 0 0 0 var(--primary-shadow), inset 0 3px 5px rgba(0,0,0,0.3) !important; }
 
-/* 3D Outline Button */
-.btn-outline { 
-    background: var(--glass-bg); border: 2px solid var(--primary); color: var(--text-main); backdrop-filter: blur(10px);
-    box-shadow: 0 4px 0 var(--primary-shadow), 0 8px 15px rgba(0,0,0,0.1) !important;
-}
-.btn-outline:hover { 
-    background: var(--primary); color: white; 
-    transform: translateY(2px) !important; 
-    box-shadow: 0 2px 0 var(--primary-shadow), 0 6px 10px rgba(0,0,0,0.15) !important;
-}
-.btn-outline:active {
-    transform: translateY(4px) !important;
-    box-shadow: 0 0 0 var(--primary-shadow), inset 0 3px 5px rgba(0,0,0,0.2) !important;
-}
-
+.btn-outline { background: var(--glass-bg); border: 2px solid var(--primary); color: var(--text-main); backdrop-filter: blur(10px); box-shadow: 0 4px 0 var(--primary-shadow), 0 8px 15px rgba(0,0,0,0.1) !important;}
+.btn-outline:hover { background: var(--primary); color: white; transform: translateY(2px) !important; box-shadow: 0 2px 0 var(--primary-shadow), 0 6px 10px rgba(0,0,0,0.15) !important;}
+.btn-outline:active { transform: translateY(4px) !important; box-shadow: 0 0 0 var(--primary-shadow), inset 0 3px 5px rgba(0,0,0,0.2) !important;}
 .btn-small { padding: 10px 24px; font-size: 14px; }
 
-/* =========================================================
-   DASHBOARD LAYOUT
-   ========================================================= */
+/* DASHBOARD LAYOUT */
 .dashboard-container { max-width: 1400px; width: 95%; margin: 40px auto; padding: 0; }
 .input-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
 
@@ -276,7 +218,7 @@ body.dark-mode .badge-pending { color: #fde047; } body.dark-mode .badge-resolved
 .attachment-badge:hover { background: var(--primary); color: white; transform: translateY(2px); box-shadow: 0 2px 0 var(--primary-shadow);}
 .attachment-badge:active { transform: translateY(4px); box-shadow: 0 0 0 var(--primary-shadow), inset 0 2px 4px rgba(0,0,0,0.3);}
 
-/* ADMIN LAYOUT */
+/* ADMIN LAYOUT & SIDEBAR */
 .admin-layout { display: flex; align-items: flex-start; min-height: 100vh; }
 .sidebar { 
     position: sticky; top: 0; height: 100vh; width: 300px; 
@@ -295,8 +237,26 @@ body.dark-mode .badge-pending { color: #fde047; } body.dark-mode .badge-resolved
 .nav-links li:hover { background: var(--input-bg); color: var(--primary); border-color: var(--glass-border); transform: translateX(8px);}
 .nav-links li.active { background: var(--primary); color: white; box-shadow: 0 6px 15px rgba(139, 92, 246, 0.3); border-color: var(--primary);}
 body.dark-mode .nav-links li.active { box-shadow: inset 4px 4px 10px rgba(0,0,0,0.3); border: none; }
-.nav-links li.logout { background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.2); margin-top: auto; color: #ef4444; text-align: center;}
-.nav-links li.logout:hover { background: #ef4444; color: white; box-shadow: 0 6px 15px rgba(239, 68, 68, 0.3); transform: translateY(-2px);}
+
+/* FIX: DYNAMIC LOGOUT BUTTON ANIMATION */
+.nav-links li.logout { 
+    margin-top: auto; text-align: center; font-weight: 800;
+    animation: logoutPulseLight 3s infinite alternate ease-in-out;
+}
+.nav-links li.logout:hover { transform: translateY(-2px) scale(1.02); animation-play-state: paused; }
+
+body.dark-mode .nav-links li.logout {
+    animation: logoutPulseDark 3s infinite alternate ease-in-out;
+}
+
+@keyframes logoutPulseLight {
+    0% { background: rgba(239, 68, 68, 0.15); border: 1px solid rgba(239, 68, 68, 0.3); color: #dc2626; box-shadow: 0 0 0 rgba(0,0,0,0); }
+    100% { background: #1e3a8a; border: 1px solid #1e3a8a; color: #ffffff; box-shadow: 0 6px 15px rgba(30, 58, 138, 0.4); }
+}
+@keyframes logoutPulseDark {
+    0% { background: rgba(239, 68, 68, 0.2); border: 1px solid rgba(239, 68, 68, 0.4); color: #fca5a5; box-shadow: 0 0 0 rgba(0,0,0,0); }
+    100% { background: #1e40af; border: 1px solid #1e40af; color: #ffffff; box-shadow: 0 6px 15px rgba(30, 64, 175, 0.5); }
+}
 
 .main-content { flex: 1; padding: 40px; min-width: 0; }
 .admin-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 40px; }
