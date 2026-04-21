@@ -44,17 +44,23 @@ body.dark-mode {
     --reflect-top: transparent;
 }
 
+/* =========================================================
+   BASE RESETS & OVERFLOW FIXES
+   ========================================================= */
 html, body { 
     margin: 0; padding: 0; box-sizing: border-box;
     overflow-x: hidden; 
-    max-width: 100vw;
+    width: 100%;
     font-family: 'Plus Jakarta Sans', Tahoma, sans-serif; 
 }
 * { box-sizing: inherit; transition: background-color 0.3s, color 0.3s; }
 
-::-webkit-scrollbar { width: 6px; height: 6px; }
-::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: var(--primary); border-radius: 10px; }
+/* FIX: Custom scrollbar ONLY for desktop. Kills the purple line bug on mobile. */
+@media (min-width: 850px) {
+    ::-webkit-scrollbar { width: 8px; height: 8px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: var(--primary); border-radius: 10px; }
+}
 
 body { 
     background: var(--bg-gradient); color: var(--text-main); 
@@ -98,14 +104,14 @@ option { font-weight: 700; padding: 12px; font-size: 15px; }
 body:not(.dark-mode) option { background-color: #f3e8ff; color: #000000; }
 body.dark-mode option { background-color: #0f172a; color: #ffffff; }
 
-/* FIX: ADDED white-space: nowrap to force text to stay on one line! */
+/* FIX: ADDED flex-shrink: 0 to physically prevent browser from squishing the buttons */
 a.btn-primary, a.btn-outline, button, .btn-primary, .btn-outline { 
     cursor: pointer; font-weight: 800; font-size: clamp(14px, 1.5vw, 15px); border-radius: 50px !important; 
     padding: 14px 28px; letter-spacing: 0.5px; position: relative; z-index: 10; display: inline-block; text-align: center;
     transition: all 0.15s ease !important;
-    white-space: nowrap !important; /* CRITICAL FIX for mobile buttons */
+    white-space: nowrap !important; 
+    flex-shrink: 0 !important; 
 }
-
 .btn-primary { background: var(--primary); border: 2px solid var(--primary); color: white; box-shadow: 0 6px 0 var(--primary-shadow), 0 10px 20px rgba(0,0,0,0.15) !important; }
 .btn-primary:hover { background: var(--primary-hover); color: white; transform: translateY(2px) !important; box-shadow: 0 4px 0 var(--primary-shadow), 0 8px 15px rgba(0,0,0,0.2) !important; }
 .btn-primary:active { transform: translateY(6px) !important; box-shadow: 0 0 0 var(--primary-shadow), inset 0 3px 5px rgba(0,0,0,0.3) !important; }
@@ -113,7 +119,7 @@ a.btn-primary, a.btn-outline, button, .btn-primary, .btn-outline {
 .btn-outline { background: var(--glass-bg); border: 2px solid var(--primary); color: var(--text-main); backdrop-filter: blur(10px); box-shadow: 0 4px 0 var(--primary-shadow), 0 8px 15px rgba(0,0,0,0.1) !important;}
 .btn-outline:hover { background: var(--primary); color: white; transform: translateY(2px) !important; box-shadow: 0 2px 0 var(--primary-shadow), 0 6px 10px rgba(0,0,0,0.15) !important;}
 .btn-outline:active { transform: translateY(4px) !important; box-shadow: 0 0 0 var(--primary-shadow), inset 0 3px 5px rgba(0,0,0,0.2) !important;}
-.btn-small { padding: 10px 20px; font-size: 13px; }
+.btn-small { padding: 10px 24px; font-size: 13px; }
 
 .c-badge { display: inline-block; padding: 6px 12px; border-radius: 30px !important; font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px;}
 .badge-pending { background: rgba(234, 179, 8, 0.15); color: #b45309; border: 1px solid rgba(234, 179, 8, 0.3);}
@@ -237,13 +243,20 @@ body.dark-mode .admin-profile { box-shadow: inset 4px 4px 10px rgba(0,0,0,0.5); 
     
     .admin-header { justify-content: flex-start; gap: 15px; }
     
-    .nav-logo-box span { display: none; } /* Hides text so buttons fit perfectly on phone */
-    .top-nav { padding: 10px 15px; }
-    .top-nav > div { gap: 10px; display: flex; align-items: center; flex-wrap: nowrap; }
+    /* LOGIN NAV FIX: Makes text vanish and shrinks buttons so they fit on 1 line */
+    .nav-logo-box span { display: none; } 
+    .nav-mini-logo { margin-right: 0; } /* Recovers lost space */
+    .top-nav { padding: 10px; }
+    .top-nav > div { gap: 6px; display: flex; align-items: center; flex-wrap: nowrap; }
     
-    /* Perfect padding for mobile top-nav buttons */
-    .btn-small { padding: 10px 18px !important; font-size: 13px !important; white-space: nowrap !important; }
-    .theme-toggle { padding: 8px 12px; font-size: 16px; }
+    /* PERFECT MOBILE BUTTONS */
+    .btn-small { 
+        padding: 8px 12px !important; 
+        font-size: 12px !important; 
+        white-space: nowrap !important; 
+        flex-shrink: 0 !important; /* Forces them to stay their shape */
+    }
+    .theme-toggle { padding: 6px 10px; font-size: 14px; }
     
     .hide-mobile { display: none !important; }
 }
@@ -252,6 +265,6 @@ body.dark-mode .admin-profile { box-shadow: inset 4px 4px 10px rgba(0,0,0,0.5); 
     .dashboard-stats { grid-template-columns: 1fr; }
     .controls-bar input, .controls-bar select { min-width: 100%; }
     
-    /* FIX: Force full width ONLY inside the glass-card forms, NOT the top nav! */
-    .glass-card .btn-primary, .glass-card .btn-outline { width: 100%; }
+    /* Extreme small phones */
+    .btn-small { padding: 6px 10px !important; font-size: 11px !important; }
 }
