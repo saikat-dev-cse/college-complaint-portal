@@ -44,9 +44,6 @@ body.dark-mode {
     --reflect-top: transparent;
 }
 
-/* =========================================================
-   BASE RESETS & OVERFLOW FIXES
-   ========================================================= */
 html, body { 
     margin: 0; padding: 0; box-sizing: border-box;
     overflow-x: hidden; 
@@ -54,13 +51,6 @@ html, body {
     font-family: 'Plus Jakarta Sans', Tahoma, sans-serif; 
 }
 * { box-sizing: inherit; transition: background-color 0.3s, color 0.3s; }
-
-/* FIX: Custom scrollbar ONLY for desktop. Kills the purple line bug on mobile. */
-@media (min-width: 850px) {
-    ::-webkit-scrollbar { width: 8px; height: 8px; }
-    ::-webkit-scrollbar-track { background: transparent; }
-    ::-webkit-scrollbar-thumb { background: var(--primary); border-radius: 10px; }
-}
 
 body { 
     background: var(--bg-gradient); color: var(--text-main); 
@@ -80,9 +70,7 @@ p, span, label, div { color: var(--text-main); }
 @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
 
-/* =========================================================
-   FORM ELEMENTS
-   ========================================================= */
+/* Inputs and Forms */
 label { display: block; font-weight: 800; font-size: clamp(12px, 1vw, 13px); text-transform: uppercase; letter-spacing: 0.5px; margin: 15px 0 8px 0; }
 
 input, select, textarea { 
@@ -104,13 +92,11 @@ option { font-weight: 700; padding: 12px; font-size: 15px; }
 body:not(.dark-mode) option { background-color: #f3e8ff; color: #000000; }
 body.dark-mode option { background-color: #0f172a; color: #ffffff; }
 
-/* FIX: ADDED flex-shrink: 0 to physically prevent browser from squishing the buttons */
+/* Buttons */
 a.btn-primary, a.btn-outline, button, .btn-primary, .btn-outline { 
     cursor: pointer; font-weight: 800; font-size: clamp(14px, 1.5vw, 15px); border-radius: 50px !important; 
     padding: 14px 28px; letter-spacing: 0.5px; position: relative; z-index: 10; display: inline-block; text-align: center;
-    transition: all 0.15s ease !important;
-    white-space: nowrap !important; 
-    flex-shrink: 0 !important; 
+    transition: all 0.15s ease !important; white-space: nowrap !important; flex-shrink: 0 !important; 
 }
 .btn-primary { background: var(--primary); border: 2px solid var(--primary); color: white; box-shadow: 0 6px 0 var(--primary-shadow), 0 10px 20px rgba(0,0,0,0.15) !important; }
 .btn-primary:hover { background: var(--primary-hover); color: white; transform: translateY(2px) !important; box-shadow: 0 4px 0 var(--primary-shadow), 0 8px 15px rgba(0,0,0,0.2) !important; }
@@ -121,14 +107,13 @@ a.btn-primary, a.btn-outline, button, .btn-primary, .btn-outline {
 .btn-outline:active { transform: translateY(4px) !important; box-shadow: 0 0 0 var(--primary-shadow), inset 0 3px 5px rgba(0,0,0,0.2) !important;}
 .btn-small { padding: 10px 24px; font-size: 13px; }
 
+/* Badges */
 .c-badge { display: inline-block; padding: 6px 12px; border-radius: 30px !important; font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px;}
 .badge-pending { background: rgba(234, 179, 8, 0.15); color: #b45309; border: 1px solid rgba(234, 179, 8, 0.3);}
 .badge-resolved { background: rgba(34, 197, 94, 0.15); color: #15803d; border: 1px solid rgba(34, 197, 94, 0.3);}
 body.dark-mode .badge-pending { color: #fde047; } body.dark-mode .badge-resolved { color: #86efac; }
 
-/* =========================================================
-   COMPONENTS
-   ========================================================= */
+/* Glass Cards and Navigation */
 .glass-card { 
     background: var(--glass-bg); backdrop-filter: blur(16px) saturate(150%); -webkit-backdrop-filter: blur(16px) saturate(150%);
     padding: clamp(20px, 4vw, 35px); border-radius: clamp(24px, 3vw, 32px); border: 1px solid var(--glass-border); 
@@ -159,16 +144,12 @@ body:not(.dark-mode) .glass-card::before {
 .theme-toggle { background: var(--glass-bg); border: 1px solid var(--glass-border); padding: 8px 12px; border-radius: 50px; font-size: clamp(16px, 2vw, 20px); cursor: pointer; color: var(--text-main); backdrop-filter: blur(10px); position: relative; z-index: 10; transition: transform 0.2s;}
 .theme-toggle:hover { transform: scale(1.1); color: var(--primary); background: var(--input-bg);}
 
-/* =========================================================
-   LOGIN / SIGNUP LAYOUT
-   ========================================================= */
+/* Login & Signup Layout */
 .center-layout { display: flex; justify-content: center; align-items: center; min-height: calc(100dvh - 80px); padding: clamp(15px, 4vw, 20px); }
 .login-box { width: 100%; max-width: 480px; min-height: clamp(550px, 70vh, 620px); display: flex; flex-direction: column; justify-content: center; align-items: stretch; text-align: center; border-radius: clamp(30px, 4vw, 40px); }
 .input-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: clamp(10px, 2vw, 20px); }
 
-/* =========================================================
-   ADMIN LAYOUT & HAMBURGER MENU
-   ========================================================= */
+/* Admin Dashboard Layout */
 .admin-layout { display: grid; grid-template-columns: 280px 1fr; min-height: 100dvh; align-items: start;}
 
 .sidebar { 
@@ -181,21 +162,19 @@ body:not(.dark-mode) .glass-card::before {
 .sidebar .logo img { width: 85px; height: 85px; object-fit: contain; background: rgba(255,255,255,0.9); border-radius: 50%; padding: 8px; margin-bottom: 15px; box-shadow: 0 8px 20px rgba(0,0,0,0.1); border: 2px solid var(--glass-border);}
 .sidebar-text { display: block; font-size: clamp(14px, 1.2vw, 15px); font-weight: 800; line-height: 1.4;}
 
+/* Uniform Admin Sidebar Links */
 .nav-links { list-style: none; display: flex; flex-direction: column; gap: 10px; position: relative; z-index: 10;}
 .nav-links li { padding: 14px 18px; border-radius: 16px; cursor: pointer; font-weight: 800; font-size: 15px; border: 1px solid transparent; transition: all 0.2s; color: var(--text-main); }
 .nav-links li:hover { background: var(--input-bg); color: var(--primary); border-color: var(--glass-border); transform: translateX(8px);}
 .nav-links li.active { background: var(--primary); color: white; box-shadow: 0 6px 15px rgba(139, 92, 246, 0.3); border-color: var(--primary);}
 body.dark-mode .nav-links li.active { box-shadow: inset 4px 4px 10px rgba(0,0,0,0.3); border: none; }
 
-.nav-links li.logout { margin-top: auto; text-align: center; animation: darkBluePulse 4s infinite alternate ease-in-out; }
-@keyframes darkBluePulse {
-    0% { background: transparent; color: var(--text-main); box-shadow: none; border-color: transparent;}
-    100% { background: #1e3a8a; color: white; box-shadow: 0 6px 15px rgba(30, 58, 138, 0.4); border-color: #1e3a8a;}
+/* Static Dark Blue Logout Button */
+.nav-links li.logout { 
+    margin-top: auto; text-align: center; background: #1e3a8a !important; 
+    color: #ffffff !important; border: none; box-shadow: 0 4px 10px rgba(30, 58, 138, 0.3);
 }
-body.dark-mode @keyframes darkBluePulse {
-    0% { background: transparent; color: var(--text-main); }
-    100% { background: #1e40af; color: white; box-shadow: 0 6px 15px rgba(30, 64, 175, 0.4); border-color: #1e40af;}
-}
+.nav-links li.logout:hover { background: #1e40af !important; transform: translateY(-2px); box-shadow: 0 6px 15px rgba(30, 58, 138, 0.5); }
 
 .hamburger-btn { 
     display: none; background: var(--glass-bg); border: 1px solid var(--glass-border);
@@ -230,10 +209,9 @@ body.dark-mode .modern-table th { background: rgba(255,255,255,0.03); }
 .admin-profile { background: var(--glass-bg); padding: 12px 24px; border-radius: 50px; font-weight: 800; border: 1px solid var(--glass-border); box-shadow: 0 4px 15px rgba(0,0,0,0.05); color: var(--primary);}
 body.dark-mode .admin-profile { box-shadow: inset 4px 4px 10px rgba(0,0,0,0.5); }
 
+@media print { .sidebar, .controls-bar, .admin-header, .analytics-panel { display: none !important; } body { background: white; color: black; } .glass-card { box-shadow: none; border: none; backdrop-filter: none;} }
 
-/* =========================================================
-   ULTIMATE MOBILE RESPONSIVE MEDIA QUERIES
-   ========================================================= */
+/* Mobile Responsiveness */
 @media (max-width: 850px) {
     .hamburger-btn { display: inline-block; }
     .admin-layout { display: block; }
@@ -243,19 +221,12 @@ body.dark-mode .admin-profile { box-shadow: inset 4px 4px 10px rgba(0,0,0,0.5); 
     
     .admin-header { justify-content: flex-start; gap: 15px; }
     
-    /* LOGIN NAV FIX: Makes text vanish and shrinks buttons so they fit on 1 line */
     .nav-logo-box span { display: none; } 
-    .nav-mini-logo { margin-right: 0; } /* Recovers lost space */
-    .top-nav { padding: 10px; }
-    .top-nav > div { gap: 6px; display: flex; align-items: center; flex-wrap: nowrap; }
+    .nav-mini-logo { margin-right: 0; }
+    .top-nav { padding: 10px 15px; }
+    .top-nav > div { gap: 10px; display: flex; align-items: center; flex-wrap: nowrap; }
     
-    /* PERFECT MOBILE BUTTONS */
-    .btn-small { 
-        padding: 8px 12px !important; 
-        font-size: 12px !important; 
-        white-space: nowrap !important; 
-        flex-shrink: 0 !important; /* Forces them to stay their shape */
-    }
+    .btn-small { padding: 8px 12px !important; font-size: 12px !important; white-space: nowrap !important; flex-shrink: 0 !important; }
     .theme-toggle { padding: 6px 10px; font-size: 14px; }
     
     .hide-mobile { display: none !important; }
@@ -264,7 +235,5 @@ body.dark-mode .admin-profile { box-shadow: inset 4px 4px 10px rgba(0,0,0,0.5); 
 @media (max-width: 480px) {
     .dashboard-stats { grid-template-columns: 1fr; }
     .controls-bar input, .controls-bar select { min-width: 100%; }
-    
-    /* Extreme small phones */
-    .btn-small { padding: 6px 10px !important; font-size: 11px !important; }
+    .glass-card .btn-primary, .glass-card .btn-outline { width: 100%; }
 }
