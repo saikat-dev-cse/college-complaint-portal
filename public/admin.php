@@ -78,7 +78,7 @@ $resolved = $conn->query("SELECT COUNT(*) as count FROM complaints WHERE status=
                 <button class="btn-outline btn-small" onclick="exportTableToCSV('complaints_report.csv')">📊 Export Excel</button>
                 <button class="btn-outline btn-small" onclick="window.print()">🖨️ Print PDF</button>
                 <button id="themeBtn" onclick="toggleTheme()" class="theme-toggle">🌙</button>
-                <div class="admin-profile"><?php echo $isSuperAdmin ? 'Principal' : 'Staff'; ?>: <?php echo $_SESSION['full_name']; ?></div>
+                <div class="admin-profile">Role: <?php echo $isSuperAdmin ? 'Principal' : 'Staff'; ?> (<?php echo $_SESSION['full_name']; ?>)</div>
             </div>
         </header>
 
