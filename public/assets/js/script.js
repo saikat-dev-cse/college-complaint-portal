@@ -1,3 +1,5 @@
+// public/assets/js/script.js
+
 // Theme Toggle Logic
 function toggleTheme() {
     document.body.classList.toggle("dark-mode");
