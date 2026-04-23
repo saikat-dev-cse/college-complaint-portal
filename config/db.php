@@ -1,10 +1,10 @@
 <?php
 // config/db.php
 
-$servername = "sql.freedb.tech"; // Your FreeDB Server
-$username = "freedb_admin_user"; // Your FreeDB Username
-$password = "zWknQmZf&Ky5?TT"; // Your FreeDB Password
-$dbname = "freedb_gcekjr_grievance"; // Your FreeDB Database Name
+$servername = "sql.freedb.tech"; 
+$username = "freedb_admin_user"; 
+$password = "zWknQmZf&Ky5?TT"; 
+$dbname = "freedb_gcekjr_grievance";
 
 // Create connection
 $conn = new mysqli($servername, $username, $password, $dbname);
