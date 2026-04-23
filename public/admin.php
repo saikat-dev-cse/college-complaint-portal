@@ -64,7 +64,7 @@ $resolved = $conn->query("SELECT COUNT(*) as count FROM complaints WHERE status=
             <li id="tab-admin" onclick="switchTab('admin'); toggleSidebar();">👨‍💼 Add Staff</li>
             <li id="tab-settings" onclick="switchTab('settings'); toggleSidebar();" style="background: rgba(234, 179, 8, 0.1); color: #eab308; border: 1px solid rgba(234, 179, 8, 0.3);">⚙️ Site Settings</li>
             <?php endif; ?>
-            <li class="logout mobile-logout"><a href="logout.php" style="color:inherit; display:block; width:100%;">🚪 Logout</a></li>
+            <li class="logout"><a href="logout.php" style="color:inherit; display:block; width:100%;">🚪 Logout</a></li>
         </ul>
     </aside>
 
@@ -78,7 +78,7 @@ $resolved = $conn->query("SELECT COUNT(*) as count FROM complaints WHERE status=
                 <button class="btn-outline btn-small" onclick="exportTableToCSV('complaints_report.csv')">📊 Export Excel</button>
                 <button class="btn-outline btn-small" onclick="window.print()">🖨️ Print PDF</button>
                 <button id="themeBtn" onclick="toggleTheme()" class="theme-toggle">🌙</button>
-                <div class="admin-profile"><?php echo $isSuperAdmin ? 'Principal' : 'Staff'; ?>: <?php echo $_SESSION['full_name']; ?></div>
+                <div class="admin-profile">Role: <?php echo $isSuperAdmin ? 'Principal' : 'Staff'; ?> (<?php echo $_SESSION['full_name']; ?>)</div>
             </div>
         </header>
 
