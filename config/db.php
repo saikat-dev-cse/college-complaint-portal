@@ -3,7 +3,7 @@
 
 $servername = "sql.freedb.tech"; 
 $username = "freedb_admin_user"; 
-$password = "zWknQmZf&Ky5?TT"; 
+$password = "zWknQmZf&Ky5?TT"; // Reverted to your original working password
 $dbname = "freedb_gcekjr_grievance";
 
 // Create connection
