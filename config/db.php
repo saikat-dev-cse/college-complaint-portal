@@ -1,16 +1,21 @@
 <?php
-// config/db.php
+// Securely grab credentials from Render's Environment Variables
+$servername = getenv("DB_HOST");
+$username = getenv("DB_USER");
+$password = getenv("DB_PASS");
+$dbname = getenv("DB_NAME");
 
-$servername = "sql.freedb.tech"; 
-$username = "freedb_admin_user"; 
-$password = "zWknQmZf&Ky5?TT"; // Reverted to your original working password
-$dbname = "freedb_gcekjr_grievance";
+// Fallback for local testing (can be empty or placeholders)
+if (!$servername) {
+    $servername = "localhost";
+    $username = "root";
+    $password = "";
+    $dbname = "gcekjr_portal";
+}
 
-// Create connection
 $conn = new mysqli($servername, $username, $password, $dbname);
 
-// Check connection
 if ($conn->connect_error) {
-    die("Database Connection Failed: " . $conn->connect_error);
+    die("Connection failed: " . $conn->connect_error);
 }
 ?>
